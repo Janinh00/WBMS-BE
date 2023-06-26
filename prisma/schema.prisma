@@ -1,0 +1,572 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("WBMS_DB_URL")
+}
+
+model Province {
+  id String @id @default(uuid()) @db.Char(36)
+
+  name String @db.VarChar(30)
+
+  isDeleted    Boolean  @default(false)
+  userCreated  String   @db.Char(36)
+  userModified String   @db.Char(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+
+  cities City[]
+}
+
+model City {
+  id         String @id @default(uuid()) @db.Char(36)
+  provinceId String @db.Char(36)
+
+  name String @db.VarChar(20)
+
+  isDeleted    Boolean  @default(false)
+  userCreated  String   @db.Char(36)
+  userModified String   @db.Char(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+
+  province Province @relation(fields: [provinceId], references: [id])
+
+  sites     Site[]
+  customers Customer[]
+}
+
+model Company {
+  id      String  @id @default(uuid()) @db.Char(36)
+  refType Int     @default(0)
+  refId   String? @db.VarChar(50)
+
+  provinceId   String? @db.Char(36)
+  provinceName String? @db.VarChar(20)
+
+  cityId   String? @db.Char(36)
+  cityName String? @db.VarChar(20)
+
+  code         String  @db.VarChar(20)
+  name         String  @db.VarChar(20)
+  shortName    String? @db.VarChar(20)
+  address      String? @db.VarChar(255)
+  addressExt   String? @db.VarChar(255)
+  postalCode   String? @db.VarChar(10)
+  country      String? @db.VarChar(20)
+  phone        String? @db.VarChar(20)
+  url          String? @db.VarChar(100)
+  contactName  String? @db.VarChar(20)
+  contactEmail String? @db.VarChar(30)
+  contactPhone String? @db.VarChar(20)
+
+  isMillOperator Boolean @default(false)
+  isTransporter  Boolean @default(false)
+  isSiteOperator Boolean @default(false)
+  isEstate       Boolean @default(false)
+
+  isDeleted    Boolean  @default(false)
+  userCreated  String   @db.Char(36)
+  userModified String   @db.Char(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+
+  sites             Site[]
+  transportVehicles TransportVehicle[]
+  mills             Mill[]
+  Driver            Driver[]
+  Transaction       Transaction[]
+  StorageTank       StorageTank[]
+}
+
+model Customer {
+  id              String @id @default(uuid()) @db.Char(36)
+  customerTypeId  String @db.Char(36)
+  customerGroupId String @db.Char(36)
+  cityId          String @db.Char(36)
+  barcodeTypeId   String @db.Char(36)
+
+  code         String  @db.VarChar(20)
+  name         String  @db.VarChar(20)
+  shortName    String? @db.VarChar(20)
+  address      String? @db.VarChar(255)
+  addressExt   String? @db.VarChar(255)
+  postalCode   String? @db.VarChar(10)
+  phone        String? @db.VarChar(20)
+  url          String? @db.VarChar(100)
+  contactName  String? @db.VarChar(20)
+  contactEmail String? @db.VarChar(30)
+  contactPhone String? @db.VarChar(20)
+  sortasi      Float? //Decimal
+  sapCode      String? @db.VarChar(20)
+
+  isDeleted    Boolean  @default(false)
+  userCreated  String   @db.Char(36)
+  userModified String   @db.Char(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+
+  customerType  CustomerType  @relation(fields: [customerTypeId], references: [id])
+  customerGroup CustomerGroup @relation(fields: [customerGroupId], references: [id])
+  city          City          @relation(fields: [cityId], references: [id])
+  barcodeType   BarcodeType   @relation(fields: [barcodeTypeId], references: [id])
+}
+
+model CustomerType {
+  id String @id @default(uuid()) @db.Char(36)
+
+  name      String  @db.VarChar(20)
+  shortDesc String? @db.VarChar(50)
+
+  isDeleted    Boolean  @default(false)
+  userCreated  String   @db.Char(36)
+  userModified String   @db.Char(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+
+  customers Customer[]
+}
+
+model CustomerGroup {
+  id String @id @default(uuid()) @db.Char(36)
+
+  name      String  @db.VarChar(20)
+  shortDesc String? @db.VarChar(50)
+
+  isDeleted    Boolean  @default(false)
+  userCreated  String   @db.Char(36)
+  userModified String   @db.Char(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+
+  customers Customer[]
+}
+
+model BarcodeType {
+  id String @id @default(uuid()) @db.Char(36)
+
+  name      String @db.VarChar(20)
+  shortDesc String @db.VarChar(50)
+
+  isDeleted    Boolean  @default(false)
+  userCreated  String   @db.Char(36)
+  userModified String   @db.Char(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+
+  customers Customer[]
+}
+
+model Site {
+  id      String  @id @default(uuid()) @db.Char(36)
+  refType Int     @default(0)
+  refId   String? @db.VarChar(50)
+
+  sourceSiteId    String? @db.Char(36)
+  sourceSiteRefId String? @db.VarChar(50)
+  sourceSiteName  String? @db.VarChar(50)
+
+  companyId    String? @db.Char(36)
+  companyRefId String? @db.VarChar(50)
+  companyName  String  @db.VarChar(50)
+
+  cityId String? @db.Char(36)
+
+  code        String  @db.VarChar(20)
+  name        String  @db.VarChar(50)
+  shortName   String? @db.VarChar(30)
+  description String? @db.VarChar(255)
+
+  latitude         Float?
+  longitude        Float?
+  solarCalibration Int?
+
+  isMill Boolean @default(false)
+
+  isDeleted    Boolean  @default(false)
+  userCreated  String   @db.VarChar(36)
+  userModified String   @db.VarChar(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+
+  sourceSite Site?    @relation("source_of_this_site", fields: [sourceSiteId], references: [id])
+  company    Company? @relation(fields: [companyId], references: [id])
+  city       City?    @relation(fields: [cityId], references: [id])
+
+  storageTanks StorageTank[]
+  weighbridges Weighbridge[]
+  mills        Mill[]
+  config       Config[]
+
+  destinationSites Site[] @relation("source_of_this_site")
+
+  originSiteTransactions      Transaction[] @relation("transactionOriginSite")
+  destinationSiteTransactions Transaction[] @relation("transactionDestinationSite")
+}
+
+model Mill {
+  id        String @id @default(uuid()) @db.Char(36)
+  siteId    String @db.Char(36)
+  companyId String @db.Char(36)
+
+  code String @db.VarChar(20)
+  name String @db.VarChar(20)
+
+  isDeleted    Boolean  @default(false)
+  userCreated  String   @db.Char(36)
+  userModified String   @db.Char(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+
+  site    Site    @relation(fields: [siteId], references: [id])
+  company Company @relation(fields: [companyId], references: [id])
+}
+
+model Weighbridge {
+  id     String @id @default(uuid()) @db.Char(36)
+  siteId String @db.Char(36)
+
+  code String @db.VarChar(20)
+  name String @db.VarChar(20)
+
+  isDeleted    Boolean  @default(false)
+  userCreated  String   @db.Char(36)
+  userModified String   @db.Char(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+
+  site Site @relation(fields: [siteId], references: [id])
+}
+
+model Config {
+  id String @id @db.Char(36) // ini site_id
+
+  minWeight    Float  @default(0)
+  imageFolder  String @db.VarChar(250)
+  fileFolder   String @db.VarChar(250)
+  millHeadCode String @db.VarChar(50)
+  millHeadName String @db.VarChar(50)
+  approval1    String @db.VarChar(50)
+  approval2    String @db.VarChar(50)
+  notes        String @db.VarChar(500)
+
+  isDeleted    Boolean  @default(false)
+  userCreated  String   @db.Char(36)
+  userModified String   @db.Char(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+
+  site Site @relation(fields: [id], references: [id])
+}
+
+model User {
+  id String @id @default(uuid()) @db.Char(36)
+
+  username       String  @unique @db.VarChar(30)
+  email          String  @unique @db.VarChar(50)
+  name           String  @db.VarChar(50)
+  division       String  @db.VarChar(30)
+  position       String  @db.VarChar(30)
+  phone          String? @db.VarChar(30)
+  hashedPassword String  @db.VarChar(100)
+  hashedRT       String? @db.VarChar(100)
+  role           String  @default("STAFF") @db.VarChar(30)
+
+  isEmailVerified Boolean @default(false)
+  isLDAPUser      Boolean @default(true)
+  isDisabled      Boolean @default(false)
+
+  isDeleted    Boolean  @default(false)
+  userCreated  String?  @db.Char(36)
+  userModified String?  @db.Char(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+}
+
+model Product {
+  id      String  @id @default(uuid()) @db.Char(36)
+  refType Int     @default(0)
+  refId   String? @db.VarChar(50)
+
+  productGroupId   String? @db.Char(36)
+  productGroupName String?
+
+  code          String  @db.VarChar(20)
+  name          String  @db.VarChar(20)
+  shortName     String? @db.VarChar(20)
+  description   String? @db.VarChar(255)
+  certification String? @db.VarChar(100)
+
+  isDeleted    Boolean  @default(false)
+  userCreated  String   @db.Char(36)
+  userModified String   @db.Char(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+
+  productGroup ProductGroup? @relation(fields: [productGroupId], references: [id])
+
+  storageTanks      StorageTank[]
+  transactions      Transaction[]
+  transportVehicles TransportVehicle[]
+}
+
+model ProductGroup {
+  id String @id @default(uuid()) @db.Char(36)
+
+  name        String  @db.VarChar(20)
+  description String? @db.VarChar(255)
+
+  isDeleted    Boolean  @default(false)
+  userCreated  String   @db.Char(36)
+  userModified String   @db.Char(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+
+  products Product[]
+}
+
+model StorageTank {
+  id      String  @id @default(uuid()) @db.Char(36)
+  refType Int     @default(0)
+  refId   String? @db.VarChar(50)
+
+  siteId    String? @db.Char(36)
+  siteRefId String? @db.VarChar(50)
+  siteName  String? @db.VarChar(20)
+
+  stockOwnerId    String? @db.Char(36)
+  stockOwnerRefId String? @db.VarChar(50)
+  stockOwnerName  String? @db.VarChar(20)
+
+  productId    String? @db.Char(36)
+  productRefId String? @db.VarChar(50)
+  productName  String? @db.VarChar(20)
+
+  code        String  @db.VarChar(50)
+  name        String  @db.VarChar(50)
+  shortName   String? @db.VarChar(50)
+  description String? @db.VarChar(255)
+  capacity    Float?
+  height      Float?
+  sccModel    Int     @default(0)
+
+  isDeleted    Boolean  @default(false)
+  userCreated  String   @db.Char(36)
+  userModified String   @db.Char(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+
+  site       Site?    @relation(fields: [siteId], references: [id])
+  stockOwner Company? @relation(fields: [stockOwnerId], references: [id])
+  product    Product? @relation(fields: [productId], references: [id])
+
+  originSourceStorageTankTransactions    Transaction[] @relation("transactionOriginStorageTank")
+  destinationSinkStorageTankTransactions Transaction[] @relation("transactionDestinationStorageTank")
+}
+
+model Driver {
+  id      String  @id @default(uuid()) @db.Char(36)
+  refType Int     @default(0)
+  refId   String? @db.VarChar(50)
+
+  companyId    String? @db.Char(36)
+  companyRefId String? @db.VarChar(50)
+  companyName  String? @db.VarChar(20)
+
+  nik       String    @unique @db.VarChar(20)
+  name      String    @db.VarChar(20)
+  phone     String?   @db.VarChar(20)
+  email     String?   @db.VarChar(30)
+  licenseNo String?   @db.VarChar(20)
+  licenseED DateTime?
+
+  isDeleted    Boolean  @default(false)
+  userCreated  String   @db.Char(36)
+  userModified String   @db.Char(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+
+  company      Company?      @relation(fields: [companyId], references: [id])
+  transactions Transaction[]
+}
+
+model TransportVehicle {
+  id      String  @id @default(uuid()) @db.Char(36)
+  refType Int     @default(0)
+  refId   String? @db.VarChar(50)
+
+  companyId    String? @db.Char(36)
+  companyRefId String? @db.VarChar(50)
+  companyName  String? @db.VarChar(20)
+
+  productId    String? @db.Char(36)
+  productRefId String? @db.VarChar(50)
+  productName  String? @db.VarChar(20)
+  productCode  String? @db.VarChar(20)
+
+  plateNo     String  @db.VarChar(20)
+  description String? @db.VarChar(255)
+  capacity    Float?
+  brand       String? @db.VarChar(20)
+  model       String? @db.VarChar(20)
+  sccModel    Int     @default(0)
+
+  licenseED DateTime?
+  keurED    DateTime?
+
+  isDeleted    Boolean  @default(false)
+  userCreated  String   @db.Char(36)
+  userModified String   @db.Char(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+
+  company Company? @relation(fields: [companyId], references: [id])
+  product Product? @relation(fields: [productId], references: [id])
+}
+
+model Transaction {
+  id    String @id @default(uuid()) @db.Char(36)
+  tType Int    @default(1)
+
+  bonTripNo      String? @db.Char(16)
+  vehicleStatus  Int     @default(0)
+  deliveryStatus Int     @default(0)
+  progressStatus Int     @default(0)
+
+  deliveryOrderId String?   @db.Char(36)
+  deliveryOrderNo String?   @db.VarChar(50)
+  deliveryDate    DateTime?
+
+  productId   String? @db.Char(36)
+  productCode String? @db.VarChar(30)
+  productName String? @db.VarChar(50)
+
+  rspoSccModel     Int     @default(0)
+  rspoUniqueNumber String? @db.VarChar(50)
+  isccSccModel     Int     @default(0)
+  isccUniqueNumber String? @db.VarChar(50)
+  isccGhgValue     Float   @default(0)
+  isccEeeValue     Float   @default(0)
+
+  transporterId               String? @db.Char(36)
+  transporterCompanyCode      String? @db.VarChar(30)
+  transporterCompanyName      String? @db.VarChar(50)
+  transporterCompanyShortName String? @db.VarChar(30)
+
+  driverId        String? @db.Char(36)
+  driverNik       String? @db.VarChar(30)
+  driverName      String? @db.VarChar(50)
+  driverLicenseNo String? @db.VarChar(30)
+
+  transportVehicleId          String? @db.Char(36)
+  transportVehiclePlateNo     String? @db.VarChar(10)
+  transportVehicleProductCode String? @db.VarChar(30)
+  transportVehicleProductName String? @db.VarChar(50)
+  transportVehicleSccModel    Int     @default(0)
+
+  originSiteId   String? @db.Char(36)
+  originSiteCode String? @db.VarChar(30)
+  originSiteName String? @db.VarChar(50)
+
+  originSourceStorageTankId   String? @db.Char(36)
+  originSourceStorageTankCode String? @db.VarChar(30)
+  originSourceStorageTankName String? @db.VarChar(50)
+
+  destinationSiteId   String? @db.Char(36)
+  destinationSiteCode String? @db.VarChar(30)
+  destinationSiteName String? @db.VarChar(50)
+
+  destinationSinkStorageTankId   String? @db.Char(36)
+  destinationSinkStorageTankCode String? @db.VarChar(30)
+  destinationSinkStorageTankName String? @db.VarChar(50)
+
+  originFfaPercentage   Float @default(0)
+  originMoistPercentage Float @default(0)
+  originDirtPercentage  Float @default(0)
+
+  originWeighInKg           Float     @default(0)
+  originWeighInRemark       String?   @db.VarChar(500)
+  originWeighInOperatorName String?   @db.VarChar(50)
+  originWeighInTimestamp    DateTime?
+
+  originWeighOutKg           Float     @default(0)
+  originWeighOutRemark       String?   @db.VarChar(500)
+  originWeighOutOperatorName String?   @db.VarChar(50)
+  originWeighOutTimestamp    DateTime?
+
+  potonganWajib Float @default(0)
+  potonganLain  Float @default(0)
+
+  destinationWeighInKg           Float     @default(0)
+  destinationWeighInRemark       String?   @db.VarChar(500)
+  destinationWeighInOperatorName String?   @db.VarChar(50)
+  destinationWeighInTimestamp    DateTime?
+
+  destinationWeighOutKg           Float     @default(0)
+  destinationWeighOutRemark       String?   @db.VarChar(500)
+  destinationWeighOutOperatorName String?   @db.VarChar(50)
+  destinationWeighOutTimestamp    DateTime?
+
+  returnWeighInKg           Float     @default(0)
+  returnWeighInRemark       String?   @db.VarChar(500)
+  returnWeighInOperatorName String?   @db.VarChar(50)
+  returnWeighInTimestamp    DateTime?
+
+  returnWeighOutKg           Float     @default(0)
+  returnWeighOutRemark       String?   @db.VarChar(500)
+  returnWeighOutOperatorName String?   @db.VarChar(50)
+  returnWeighOutTimestamp    DateTime?
+
+  currentSeal1 String? @db.VarChar(30)
+  currentSeal2 String? @db.VarChar(30)
+  currentSeal3 String? @db.VarChar(30)
+  currentSeal4 String? @db.VarChar(30)
+
+  loadedSeal1         String?   @db.VarChar(30)
+  loadedSeal2         String?   @db.VarChar(30)
+  loadedSeal3         String?   @db.VarChar(30)
+  loadedSeal4         String?   @db.VarChar(30)
+  loadingRemark       String?   @db.VarChar(500)
+  loadingOperatorName String?   @db.VarChar(50)
+  loadingTimestamp    DateTime?
+
+  unloadedSeal1         String?   @db.VarChar(30)
+  unloadedSeal2         String?   @db.VarChar(30)
+  unloadedSeal3         String?   @db.VarChar(30)
+  unloadedSeal4         String?   @db.VarChar(30)
+  unloadingRemark       String?   @db.VarChar(500)
+  unloadingOperatorName String?   @db.VarChar(50)
+  unloadingTimestamp    DateTime?
+
+  returnUnloadedSeal1         String?   @db.VarChar(30)
+  returnUnloadedSeal2         String?   @db.VarChar(30)
+  returnUnloadedSeal3         String?   @db.VarChar(30)
+  returnUnloadedSeal4         String?   @db.VarChar(30)
+  returnUnloadingRemark       String?   @db.VarChar(500)
+  returnUnloadingOperatorName String?   @db.VarChar(50)
+  returnUnloadingTimestamp    DateTime?
+
+  jsonData Json?
+
+  isDeleted    Boolean  @default(false)
+  userCreated  String   @db.Char(36)
+  userModified String   @db.Char(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+
+  product     Product? @relation(fields: [productId], references: [id])
+  transporter Company? @relation(fields: [transporterId], references: [id])
+  driver      Driver?  @relation(fields: [driverId], references: [id])
+
+  originSite      Site? @relation(fields: [originSiteId], references: [id], name: "transactionOriginSite")
+  destinationSite Site? @relation(fields: [destinationSiteId], references: [id], name: "transactionDestinationSite")
+
+  originSourceStorageTank    StorageTank? @relation("transactionOriginStorageTank", fields: [originSourceStorageTankId], references: [id])
+  destinationSinkStorageTank StorageTank? @relation("transactionDestinationStorageTank", fields: [destinationSinkStorageTankId], references: [id])
+}
