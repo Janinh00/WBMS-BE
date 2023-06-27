@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { DbService } from 'src/db/db.service';
 import { SemaiService } from 'src/semai/semai.service';
 import { CreateSiteDto, UpdateSiteDto } from './dto';
+import { SiteEntity } from './entities/site.entity';
 
 @Injectable()
 export class SitesService {
@@ -13,54 +14,20 @@ export class SitesService {
     private semaiService: SemaiService,
   ) {}
 
-  async getAll() {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      records: {},
-      logs: {},
-    };
+  async getAll(): Promise<SiteEntity[]> {
+    const sites = await this.db.site.findMany({
+      where: { isDeleted: false },
+    });
 
-    try {
-      const records = await this.db.site.findMany({
-        where: { isDeleted: false },
-      });
-
-      dataOut.records = records;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return sites;
   }
 
-  async getAllDeleted() {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      records: {},
-      logs: {},
-    };
+  async getAllDeleted(): Promise<SiteEntity[]> {
+    const sites = await this.db.site.findMany({
+      where: { isDeleted: true },
+    });
 
-    try {
-      const records = await this.db.site.findMany({
-        where: { isDeleted: true },
-      });
-
-      dataOut.records = records;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return sites;
   }
 
   async getById(id: string) {

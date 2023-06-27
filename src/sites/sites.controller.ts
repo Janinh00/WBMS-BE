@@ -18,13 +18,53 @@ export class SitesController {
   constructor(private readonly sitesService: SitesService) {}
 
   @Get('')
-  getAll() {
-    return this.sitesService.getAll();
+  async getAll() {
+    const dataOut = {
+      status: true,
+      message: '',
+      data: {
+        site: { page: 0, totalRecords: 0, records: {} },
+      },
+      logs: {},
+    };
+
+    try {
+      const sites = await this.sitesService.getAll();
+
+      dataOut.data.site.totalRecords = sites.length;
+      dataOut.data.site.records = sites;
+    } catch (error) {
+      dataOut.status = false;
+      dataOut.message = error.message;
+      dataOut.logs = { ...dataOut.logs, error };
+    }
+
+    return dataOut;
   }
 
   @Get('deleted')
-  getAllDeleted() {
-    return this.sitesService.getAllDeleted();
+  async getAllDeleted() {
+    const dataOut = {
+      status: true,
+      message: '',
+      data: {
+        site: { page: 0, totalRecords: 0, records: {} },
+      },
+      logs: {},
+    };
+
+    try {
+      const sites = await this.sitesService.getAllDeleted();
+
+      dataOut.data.site.totalRecords = sites.length;
+      dataOut.data.site.records = sites;
+    } catch (error) {
+      dataOut.status = false;
+      dataOut.message = error.message;
+      dataOut.logs = { ...dataOut.logs, error };
+    }
+
+    return dataOut;
   }
 
   @Get('sync-with-semai')

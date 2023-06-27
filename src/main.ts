@@ -17,7 +17,11 @@ async function bootstrap() {
   const WBMS_APP_PORT = config.get('WBMS_APP_PORT');
 
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: [
+      'http://localhost:3000',
+      'http://192.168.1.122:3000',
+      'http://192.168.1.122:6001',
+    ],
     methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
     credentials: true,
   });

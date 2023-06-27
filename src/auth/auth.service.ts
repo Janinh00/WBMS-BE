@@ -71,11 +71,11 @@ export class AuthService {
 
     res.cookie('at', tokens.access_token, {
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: 'lax',
     });
     res.cookie('rt', tokens.refresh_token, {
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: 'lax',
     });
 
     return { tokens, user };
