@@ -1,88 +1,26 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsString,
-  IsNotEmpty,
-  IsUUID,
-  IsOptional,
-  IsDecimal,
-  IsInt,
-  IsBoolean,
-  MaxLength,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsUUID, IsOptional, IsInt, IsBoolean, IsNumber } from 'class-validator';
 
 export class CreateSiteDto {
-  @IsUUID()
-  @IsOptional()
-  @ApiProperty({ required: false })
-  sourceSiteId?: string;
+  @ApiProperty({ required: false }) @IsUUID() @IsOptional() sourceSiteId?: string;
+  @ApiProperty({ required: false }) @IsUUID() @IsOptional() sourceSiteRefId?: string;
+  @ApiProperty({ required: false }) @IsString() @IsOptional() sourceSiteName?: string;
 
-  @IsUUID()
-  @IsOptional()
-  @ApiProperty({ required: false })
-  sourceSiteRefId?: string;
+  @ApiProperty() @IsUUID() @IsNotEmpty() companyId?: string;
+  @ApiProperty({ required: false }) @IsUUID() @IsOptional() companyRefId?: string;
+  @ApiProperty() @IsString() @IsNotEmpty() companyName: string;
 
-  @IsString()
-  @IsOptional()
-  @ApiProperty({ required: false })
-  sourceSiteName?: string;
+  @ApiProperty({ required: false }) @IsUUID() @IsOptional() cityId?: string;
 
-  @IsUUID()
-  @IsOptional()
-  @ApiProperty({ required: false })
-  companyId?: string;
+  @ApiProperty() @IsString() @IsNotEmpty() code: string;
+  @ApiProperty({ required: false }) @IsString() @IsOptional() codeSap: string;
+  @ApiProperty() @IsString() @IsNotEmpty() name: string;
+  @ApiProperty({ required: false }) @IsString() @IsOptional() shortName?: string;
+  @ApiProperty({ required: false }) @IsString() @IsOptional() description?: string;
 
-  @IsUUID()
-  @IsOptional()
-  @ApiProperty({ required: false })
-  companyRefId?: string;
+  @ApiProperty({ required: false }) @IsNumber() @IsOptional() latitude?: number;
+  @ApiProperty({ required: false }) @IsNumber() @IsOptional() longitude?: number;
+  @ApiProperty({ required: false }) @IsInt() @IsOptional() solarCalibration?: number;
 
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  companyName: string;
-
-  @IsUUID()
-  @IsOptional()
-  @ApiProperty({ required: false })
-  cityId?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  code: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  name: string;
-
-  @IsString()
-  @IsOptional()
-  @ApiProperty({ required: false })
-  shortName?: string;
-
-  @IsString()
-  @IsOptional()
-  @ApiProperty({ required: false })
-  description?: string;
-
-  @IsDecimal()
-  @IsOptional()
-  @ApiProperty({ required: false })
-  latitude?: number;
-
-  @IsDecimal()
-  @IsOptional()
-  @ApiProperty({ required: false })
-  longitude?: number;
-
-  @IsInt()
-  @IsOptional()
-  @ApiProperty({ required: false })
-  solarCalibration?: number;
-
-  @IsBoolean()
-  @IsOptional()
-  @ApiProperty({ required: false, default: false })
-  isMill?: boolean = false;
+  @ApiProperty({ required: false, default: false }) @IsBoolean() @IsOptional() isMill?: boolean = false;
 }

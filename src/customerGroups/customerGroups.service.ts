@@ -1,193 +1,109 @@
 import { Injectable } from '@nestjs/common';
+
 import { DbService } from 'src/db/db.service';
+import { CreateCustomerGroupDto, UpdateCustomerGroupDto } from './dto';
+import { CustomerGroupEntity } from './entities';
 
 @Injectable()
 export class CustomerGroupsService {
   constructor(private db: DbService) {}
 
-  async getAll() {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      records: {},
-      logs: {},
-    };
+  async getAll(): Promise<CustomerGroupEntity[]> {
+    const records = await this.db.customerGroup.findMany({
+      where: { isDeleted: false },
+    });
 
-    try {
-      const records = await this.db.customerGroup.findMany({
-        where: { isDeleted: false },
-      });
-
-      dataOut.records = records;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return records;
   }
 
-  async searchMany(query: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      records: {},
-      logs: {},
-    };
+  async getAllDeleted(): Promise<CustomerGroupEntity[]> {
+    const records = await this.db.customerGroup.findMany({
+      where: { isDeleted: true },
+    });
 
-    try {
-      const records = await this.db.customerGroup.findMany({
-        ...query,
-        isDeleted: false,
-      });
-
-      dataOut.records = records;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return records;
   }
 
-  async searchFirst(query: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      record: {},
-      logs: {},
-    };
+  async getById(id: string): Promise<CustomerGroupEntity> {
+    const record = await this.db.customerGroup.findUnique({
+      where: { id },
+    });
 
-    try {
-      const record = await this.db.customerGroup.findFirst({
-        ...query,
-        isDeleted: false,
-      });
-
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 
-  async getById(id: string) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      record: {},
-      logs: {},
-    };
+  async searchFirst(query: any): Promise<CustomerGroupEntity> {
+    query.where = { ...query.where, isDeleted: false };
 
-    try {
-      const record = await this.db.customerGroup.findUnique({
-        where: { id },
-      });
+    const record = await this.db.customerGroup.findFirst(query);
 
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 
-  async create(dto: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      record: {},
-      logs: {},
-    };
+  async searchMany(query: any): Promise<CustomerGroupEntity[]> {
+    query.where = { ...query.where, isDeleted: false };
 
-    try {
-      const params = {
-        data: {
-          ...dto,
-          userCreated: '',
-          userModified: '',
-        },
-      };
+    const records = await this.db.customerGroup.findMany(query);
 
-      const record = await this.db.customerGroup.create(params);
-
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return records;
   }
 
-  async updateById(id: string, dto: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      record: {},
-      logs: {},
-    };
+  async searchFirstDeleted(query: any): Promise<CustomerGroupEntity> {
+    query.where = { ...query.where, isDeleted: true };
 
-    try {
-      const params = {
-        where: { id },
-        data: { ...dto, userModified: '' },
-      };
+    const record = await this.db.customerGroup.findFirst(query);
 
-      const record = await this.db.customerGroup.update(params);
-
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 
-  async deleteById(id: string) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      record: {},
-      logs: {},
+  async searchManyDeleted(query: any): Promise<CustomerGroupEntity[]> {
+    query.where = { ...query.where, isDeleted: true };
+
+    const records = await this.db.customerGroup.findMany(query);
+
+    return records;
+  }
+
+  async create(
+    dto: CreateCustomerGroupDto,
+    userId: string,
+  ): Promise<CustomerGroupEntity> {
+    const params = {
+      data: {
+        ...dto,
+        userCreated: userId,
+        userModified: userId,
+      },
     };
 
-    try {
-      const params = {
-        where: { id },
-        data: { isDeleted: true, userModified: '' },
-      };
-      const record = await this.db.customerGroup.update(params);
+    const record = await this.db.customerGroup.create(params);
 
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
+    return record;
+  }
 
-    return dataOut;
+  async updateById(
+    id: string,
+    dto: UpdateCustomerGroupDto,
+    userId: string,
+  ): Promise<CustomerGroupEntity> {
+    const params = {
+      where: { id },
+      data: { ...dto, userModified: userId },
+    };
+
+    const record = await this.db.customerGroup.update(params);
+
+    return record;
+  }
+
+  async deleteById(id: string, userId: string): Promise<CustomerGroupEntity> {
+    const params = {
+      where: { id },
+      data: { isDeleted: true, userModified: userId },
+    };
+
+    const record = await this.db.customerGroup.update(params);
+
+    return record;
   }
 }

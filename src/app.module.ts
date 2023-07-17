@@ -20,13 +20,15 @@ import { StorageTanksModule } from './storageTanks/storageTanks.module';
 import { ProductGroupsModule } from './productGroups/productGroups.module';
 import { ProvincesModule } from './provinces/provinces.module';
 import { SemaiModule } from './semai/semai.module';
+import { DriverModule } from './driver/driver.module';
+import { TransportVehicleModule } from './transport-vehicle/transport-vehicle.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    DbModule,
     AuthModule,
     TransactionModule,
-    DbModule,
     SitesModule,
     CompaniesModule,
     CitiesModule,
@@ -43,6 +45,8 @@ import { SemaiModule } from './semai/semai.module';
     ProductGroupsModule,
     ProvincesModule,
     SemaiModule,
-  ],
+    DriverModule,
+    TransportVehicleModule
+  ]
 })
 export class AppModule {}

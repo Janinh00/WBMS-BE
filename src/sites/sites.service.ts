@@ -15,282 +15,173 @@ export class SitesService {
   ) {}
 
   async getAll(): Promise<SiteEntity[]> {
-    const sites = await this.db.site.findMany({
+    const records = await this.db.site.findMany({
       where: { isDeleted: false },
     });
 
-    return sites;
+    return records;
   }
 
   async getAllDeleted(): Promise<SiteEntity[]> {
-    const sites = await this.db.site.findMany({
+    const records = await this.db.site.findMany({
       where: { isDeleted: true },
     });
 
-    return sites;
+    return records;
   }
 
-  async getById(id: string) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      record: {},
-      logs: {},
-    };
+  async getById(id: string): Promise<SiteEntity> {
+    const record = await this.db.site.findUnique({
+      where: { id },
+    });
 
-    try {
-      const record = await this.db.site.findUnique({
-        where: { id },
-      });
-
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 
-  async searchFirst(query: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      record: {},
-      logs: {},
-    };
+  async searchFirst(query: any): Promise<SiteEntity> {
+    query.where = { ...query.where, isDeleted: false };
 
-    try {
-      query.where = { ...query.where, isDeleted: false };
+    const record = await this.db.site.findFirst(query);
 
-      const record = await this.db.site.findFirst({ ...query });
-
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 
-  async searchMany(query: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      records: {},
-      logs: {},
-    };
+  async searchMany(query: any): Promise<SiteEntity[]> {
+    query.where = { ...query.where, isDeleted: false };
 
-    try {
-      query.where = { ...query.where, isDeleted: false };
+    const records = await this.db.site.findMany(query);
 
-      const records = await this.db.site.findMany({ ...query });
-
-      dataOut.records = records;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return records;
   }
 
-  async searchFirstDeleted(query: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      record: {},
-      logs: {},
-    };
+  async searchFirstDeleted(query: any): Promise<SiteEntity> {
+    query.where = { ...query.where, isDeleted: true };
 
-    try {
-      query.where = { ...query.where, isDeleted: true };
+    const record = await this.db.site.findFirst(query);
 
-      const record = await this.db.site.findFirst({ ...query });
-
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 
-  async searchManyDeleted(query: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      records: {},
-      logs: {},
-    };
+  async searchManyDeleted(query: any): Promise<SiteEntity[]> {
+    query.where = { ...query.where, isDeleted: true };
 
-    try {
-      query.where = { ...query.where, isDeleted: true };
+    const records = await this.db.site.findMany(query);
 
-      const records = await this.db.site.findMany({ ...query });
-
-      dataOut.records = records;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return records;
   }
 
-  async create(dto: CreateSiteDto) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      record: {},
-      logs: {},
+  async create(dto: CreateSiteDto, userId: string): Promise<SiteEntity> {
+    const params = {
+      data: {
+        ...dto,
+        userCreated: userId,
+        userModified: userId,
+      },
     };
 
-    try {
-      const params = {
-        data: {
-          ...dto,
-          userCreated: '',
-          userModified: '',
-        },
-      };
+    const record = await this.db.site.create(params);
 
-      const record = await this.db.site.create(params);
-
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 
-  async updateById(id: string, dto: UpdateSiteDto) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      record: {},
-      logs: {},
+  async updateById(
+    id: string,
+    dto: UpdateSiteDto,
+    userId: string,
+  ): Promise<SiteEntity> {
+    const params = {
+      where: { id },
+      data: { ...dto, userModified: userId },
     };
 
-    try {
-      const params = {
-        where: { id },
-        data: { ...dto, userModified: '' },
-      };
+    const record = await this.db.site.update(params);
 
-      const record = await this.db.site.update(params);
-
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 
-  async deleteById(id: string) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      record: {},
-      logs: {},
+  async deleteById(id: string, userId: string): Promise<SiteEntity> {
+    const params = {
+      where: { id },
+      data: { isDeleted: true, userModified: userId },
     };
 
-    try {
-      const params = {
-        where: { id },
-        data: { isDeleted: true, userModified: '' },
-      };
-      const record = await this.db.site.update(params);
+    const record = await this.db.site.update(params);
 
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 
   async syncWithSemai() {
     const sites = await this.semaiService.sites().then((res) => res.data.sites);
 
-    sites.forEach((site) => {
-      this.db.site
-        .findFirstOrThrow({
-          where: {
-            refType: 1,
-            refId: site.id,
-          },
-        })
-        .then((res) => {
-          this.db.site
-            .update({
-              where: { id: res.id },
-              data: {
-                code: site?.code,
-                name: site?.name,
-                shortName: site?.shortName,
-                companyRefId: site?.companyId,
-                companyName: site?.companyName,
-                description: site?.description,
-                latitude: site?.latitude,
-                longitude: site?.longitude,
-                solarCalibration: site?.solarCalibration,
-                isMill: site?.isMill,
-              },
-            })
-            .then((res) => console.log(res));
-        })
-        .catch(() => {
-          this.db.site
-            .create({
-              data: {
-                refType: 1,
-                refId: site.id,
-                code: site?.code,
-                name: site?.name,
-                shortName: site?.shortName,
-                companyRefId: site?.companyId,
-                companyName: site?.companyName,
-                description: site?.description,
-                latitude: site?.latitude,
-                longitude: site?.longitude,
-                solarCalibration: site?.solarCalibration,
-                isMill: site?.isMill,
+    if (sites?.length > 0)
+      sites.forEach((site) => {
+        this.db.site
+          .findFirstOrThrow({
+            where: {
+              refType: 1,
+              refId: site.id,
+            },
+          })
+          .then((res) => {
+            this.db.site
+              .update({
+                where: { id: res.id },
+                data: {
+                  sourceSiteRefId: site?.sourceSiteId,
+                  sourceSiteName: site?.sourceSiteName,
 
-                userCreated: '',
-                userModified: '',
-              },
-            })
-            .then((res) => console.log(res));
-        });
-    });
+                  companyRefId: site?.companyId,
+                  companyName: site?.companyName,
+
+                  code: site?.code,
+                  name: site?.name,
+                  shortName: site?.shortName,
+                  description: site?.description,
+
+                  latitude: site?.latitude,
+                  longitude: site?.longitude,
+                  solarCalibration: site?.solarCalibration,
+
+                  isMill: site?.isMill,
+
+                  isDeleted: site?.isDeleted,
+                },
+              })
+              .then((res) => console.log(res));
+          })
+          .catch(() => {
+            this.db.site
+              .create({
+                data: {
+                  refType: 1,
+                  refId: site.id,
+
+                  sourceSiteRefId: site?.sourceSiteId,
+                  sourceSiteName: site?.sourceSiteName,
+
+                  companyRefId: site?.companyId,
+                  companyName: site?.companyName,
+
+                  code: site?.code,
+                  name: site?.name,
+                  shortName: site?.shortName,
+                  description: site?.description,
+
+                  latitude: site?.latitude,
+                  longitude: site?.longitude,
+                  solarCalibration: site?.solarCalibration,
+
+                  isMill: site?.isMill,
+
+                  isDeleted: site?.isDeleted,
+
+                  userCreated: '',
+                  userModified: '',
+                },
+              })
+              .then((res) => console.log(res));
+          });
+      });
 
     return sites;
   }

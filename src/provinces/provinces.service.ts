@@ -1,274 +1,102 @@
 import { Injectable } from '@nestjs/common';
+
 import { DbService } from 'src/db/db.service';
-import { CreateProvinceDto } from './dto/create-province.dto';
-import { UpdateProvinceDto } from './dto/update-province.dto';
+import { CreateProvinceDto, UpdateProvinceDto } from './dto';
+import { ProvinceEntity } from './entities';
 
 @Injectable()
 export class ProvincesService {
   constructor(private db: DbService) {}
 
-  async getAll() {
-    const dataOut = {
-      status: true,
-      message: '',
-      data: {
-        provinces: {
-          page: 0,
-          totalRecords: 0,
-          records: [],
-        },
-      },
-      logs: {},
-    };
+  async getAll(): Promise<ProvinceEntity[]> {
+    const records = await this.db.province.findMany({
+      where: { isDeleted: false },
+    });
 
-    try {
-      const provinces = await this.db.province.findMany({
-        where: { isDeleted: false },
-      });
-
-      dataOut.data.provinces.records = provinces;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return records;
   }
 
-  async getAllDeleted() {
-    const dataOut = {
-      status: true,
-      message: '',
-      data: {
-        provinces: {
-          page: 0,
-          totalRecords: 0,
-          records: [],
-        },
-      },
-      logs: {},
-    };
+  async getAllDeleted(): Promise<ProvinceEntity[]> {
+    const records = await this.db.province.findMany({
+      where: { isDeleted: true },
+    });
 
-    try {
-      const records = await this.db.province.findMany({
-        where: { isDeleted: true },
-      });
-
-      dataOut.data.provinces.records = records;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return records;
   }
 
-  async getById(id: string) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      record: {},
-      logs: {},
-    };
+  async getById(id: string): Promise<ProvinceEntity> {
+    const record = await this.db.province.findUnique({
+      where: { id },
+    });
 
-    try {
-      const record = await this.db.province.findUnique({
-        where: { id },
-      });
-
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 
-  async searchFirst(query: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      record: {},
-      logs: {},
-    };
-
+  async searchFirst(query: any): Promise<ProvinceEntity> {
     query.where = { ...query.where, isDeleted: false };
 
-    try {
-      const record = await this.db.province.findFirst(query);
+    const record = await this.db.province.findFirst(query);
 
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 
-  async searchMany(query: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      records: {},
-      logs: {},
-    };
-
+  async searchMany(query: any): Promise<ProvinceEntity[]> {
     query.where = { ...query.where, isDeleted: false };
 
-    try {
-      const records = await this.db.province.findMany(query);
+    const records = await this.db.province.findMany(query);
 
-      dataOut.records = records;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return records;
   }
 
-  async searchFirstDeleted(query: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      record: {},
-      logs: {},
-    };
-
+  async searchFirstDeleted(query: any): Promise<ProvinceEntity> {
     query.where = { ...query.where, isDeleted: true };
 
-    try {
-      const record = await this.db.province.findFirst(query);
+    const record = await this.db.province.findFirst(query);
 
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 
-  async searchManyDeleted(query: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      records: {},
-      logs: {},
-    };
-
+  async searchManyDeleted(query: any): Promise<ProvinceEntity[]> {
     query.where = { ...query.where, isDeleted: true };
 
-    try {
-      const records = await this.db.province.findMany(query);
+    const records = await this.db.province.findMany(query);
 
-      dataOut.records = records;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return records;
   }
 
-  async create(dto: CreateProvinceDto) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      record: {},
-      logs: {},
+  async create(dto: CreateProvinceDto, userId: string): Promise<ProvinceEntity> {
+    const params = {
+      data: {
+        ...dto,
+        userCreated: userId,
+        userModified: userId,
+      },
     };
 
-    try {
-      const params = {
-        data: {
-          ...dto,
-          userCreated: '',
-          userModified: '',
-        },
-      };
+    const record = await this.db.province.create(params);
 
-      const record = await this.db.province.create(params);
-
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 
-  async updateById(id: string, dto: UpdateProvinceDto) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      record: {},
-      logs: {},
+  async updateById(id: string, dto: UpdateProvinceDto, userId: string): Promise<ProvinceEntity> {
+    const params = {
+      where: { id },
+      data: { ...dto, userModified: userId },
     };
 
-    try {
-      const params = {
-        where: { id },
-        data: { ...dto, userModified: '' },
-      };
+    const record = await this.db.province.update(params);
 
-      const record = await this.db.province.update(params);
-
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 
-  async deleteById(id: string) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      record: {},
-      logs: {},
+  async deleteById(id: string, userId: string): Promise<ProvinceEntity> {
+    const params = {
+      where: { id },
+      data: { isDeleted: true, userModified: userId },
     };
 
-    try {
-      const params = {
-        where: { id },
-        data: { isDeleted: true, userModified: '' },
-      };
-      const record = await this.db.province.update(params);
+    const record = await this.db.province.update(params);
 
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 }

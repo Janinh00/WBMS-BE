@@ -1,28 +1,13 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
-import { DbService } from 'src/db/db.service';
-
+import { Prisma } from '@prisma/client';
 import { hash } from 'argon2';
-import { Prisma, PrismaPromise } from '@prisma/client';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UserEntity } from './entities/user.entity';
-import { error } from 'console';
-import { UpdateUserDto } from './dto';
+
+import { DbService } from 'src/db/db.service';
+import { CreateUserDto, UpdateUserDto } from './dto';
+import { UserEntity } from './entities';
 
 @Injectable()
 export class UsersService {
-  searchFirst(query: any) {
-    throw new Error('Method not implemented.');
-  }
-  searchMany(query: any) {
-    throw new Error('Method not implemented.');
-  }
-  searchFirstDeleted(query: any) {
-    throw new Error('Method not implemented.');
-  }
-  searchManyDeleted(query: any) {
-    throw new Error('Method not implemented.');
-  }
-
   constructor(private db: DbService) {}
 
   async getIAM(id: string): Promise<UserEntity> {
@@ -35,19 +20,19 @@ export class UsersService {
   }
 
   async getAll(): Promise<UserEntity[]> {
-    const users = await this.db.user.findMany({
-      where: { isDeleted: false },
+    const records = await this.db.user.findMany({
+      where: { isDeleted: false }
     });
 
-    return users;
+    return records;
   }
 
   async getAllDeleted(): Promise<UserEntity[]> {
-    const users = await this.db.user.findMany({
-      where: { isDeleted: true },
+    const records = await this.db.user.findMany({
+      where: { isDeleted: true }
     });
 
-    return users;
+    return records;
   }
 
   async getById(id: string): Promise<UserEntity> {
@@ -67,18 +52,19 @@ export class UsersService {
         data: {
           username: dto.username,
           email: dto.email,
+          nik: dto.nik,
           name: dto.name,
           division: dto.division,
           position: dto.position,
           phone: dto.phone,
           hashedPassword: hashedPassword,
-          role: dto.role,
-        },
+          role: dto.role
+        }
       })
       .catch((error) => {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          if (error.code === 'P2002')
-            throw new ForbiddenException('Credentials taken.');
+          // if (error.code === 'P2002') throw new ForbiddenException('Credentials taken.');
+          if (error.code === 'P2002') throw new ForbiddenException('Username/Email/NIK already taken.');
         }
 
         throw error;
@@ -99,12 +85,11 @@ export class UsersService {
     const user = await this.db.user
       .update({
         where: { id },
-        data: { ...updateData },
+        data: { ...updateData }
       })
       .catch((error) => {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          if (error.code === 'P2002')
-            throw new ForbiddenException('Credentials taken.');
+          if (error.code === 'P2002') throw new ForbiddenException('Credentials taken.');
         }
 
         throw error;
@@ -116,9 +101,22 @@ export class UsersService {
   async deleteById(id: string) {
     const user = await this.db.user.update({
       where: { id },
-      data: { isDisabled: true, isDeleted: true },
+      data: { isDisabled: true, isDeleted: true }
     });
 
     return user;
+  }
+
+  searchFirst(query: any) {
+    throw new Error('Method not implemented.');
+  }
+  searchMany(query: any) {
+    throw new Error('Method not implemented.');
+  }
+  searchFirstDeleted(query: any) {
+    throw new Error('Method not implemented.');
+  }
+  searchManyDeleted(query: any) {
+    throw new Error('Method not implemented.');
   }
 }

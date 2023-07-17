@@ -28,7 +28,7 @@ model City {
   id         String @id @default(uuid()) @db.Char(36)
   provinceId String @db.Char(36)
 
-  name String @db.VarChar(20)
+  name String @db.VarChar(30)
 
   isDeleted    Boolean  @default(false)
   userCreated  String   @db.Char(36)
@@ -44,27 +44,24 @@ model City {
 
 model Company {
   id      String  @id @default(uuid()) @db.Char(36)
-  refType Int     @default(0)
+  refType Int     @default(0) //0: WBMS, 1: eDispatch
   refId   String? @db.VarChar(50)
 
-  provinceId   String? @db.Char(36)
-  provinceName String? @db.VarChar(20)
-
-  cityId   String? @db.Char(36)
-  cityName String? @db.VarChar(20)
-
-  code         String  @db.VarChar(20)
-  name         String  @db.VarChar(20)
-  shortName    String? @db.VarChar(20)
-  address      String? @db.VarChar(255)
-  addressExt   String? @db.VarChar(255)
+  code         String  @db.VarChar(50)
+  codeSap      String? @db.VarChar(50)
+  name         String  @db.VarChar(50)
+  shortName    String? @db.VarChar(50)
+  address      String? @db.VarChar(250)
+  addressExt   String? @db.VarChar(250)
   postalCode   String? @db.VarChar(10)
-  country      String? @db.VarChar(20)
-  phone        String? @db.VarChar(20)
+  country      String? @db.VarChar(30)
+  province     String? @db.VarChar(30)
+  city         String? @db.VarChar(30)
+  phone        String? @db.VarChar(30)
   url          String? @db.VarChar(100)
-  contactName  String? @db.VarChar(20)
+  contactName  String? @db.VarChar(50)
   contactEmail String? @db.VarChar(30)
-  contactPhone String? @db.VarChar(20)
+  contactPhone String? @db.VarChar(30)
 
   isMillOperator Boolean @default(false)
   isTransporter  Boolean @default(false)
@@ -90,21 +87,21 @@ model Customer {
   customerTypeId  String @db.Char(36)
   customerGroupId String @db.Char(36)
   cityId          String @db.Char(36)
-  barcodeTypeId   String @db.Char(36)
+  // barcodeTypeId   String? @db.Char(36)
 
-  code         String  @db.VarChar(20)
-  name         String  @db.VarChar(20)
-  shortName    String? @db.VarChar(20)
-  address      String? @db.VarChar(255)
-  addressExt   String? @db.VarChar(255)
+  code         String  @db.VarChar(50)
+  codeSap      String? @db.VarChar(50)
+  name         String  @db.VarChar(50)
+  shortName    String? @db.VarChar(50)
+  address      String? @db.VarChar(250)
+  addressExt   String? @db.VarChar(250)
   postalCode   String? @db.VarChar(10)
-  phone        String? @db.VarChar(20)
+  phone        String? @db.VarChar(30)
   url          String? @db.VarChar(100)
-  contactName  String? @db.VarChar(20)
+  contactName  String? @db.VarChar(50)
   contactEmail String? @db.VarChar(30)
-  contactPhone String? @db.VarChar(20)
+  contactPhone String? @db.VarChar(30)
   sortasi      Float? //Decimal
-  sapCode      String? @db.VarChar(20)
 
   isDeleted    Boolean  @default(false)
   userCreated  String   @db.Char(36)
@@ -115,14 +112,15 @@ model Customer {
   customerType  CustomerType  @relation(fields: [customerTypeId], references: [id])
   customerGroup CustomerGroup @relation(fields: [customerGroupId], references: [id])
   city          City          @relation(fields: [cityId], references: [id])
-  barcodeType   BarcodeType   @relation(fields: [barcodeTypeId], references: [id])
+  // barcodeType   BarcodeType?   @relation(fields: [barcodeTypeId], references: [id])
 }
 
 model CustomerType {
   id String @id @default(uuid()) @db.Char(36)
 
-  name      String  @db.VarChar(20)
-  shortDesc String? @db.VarChar(50)
+  name        String  @db.VarChar(50)
+  shortDesc   String? @db.VarChar(100)
+  description String? @db.VarChar(500)
 
   isDeleted    Boolean  @default(false)
   userCreated  String   @db.Char(36)
@@ -136,8 +134,9 @@ model CustomerType {
 model CustomerGroup {
   id String @id @default(uuid()) @db.Char(36)
 
-  name      String  @db.VarChar(20)
-  shortDesc String? @db.VarChar(50)
+  name        String  @db.VarChar(50)
+  shortDesc   String? @db.VarChar(100)
+  description String? @db.VarChar(500)
 
   isDeleted    Boolean  @default(false)
   userCreated  String   @db.Char(36)
@@ -151,8 +150,9 @@ model CustomerGroup {
 model BarcodeType {
   id String @id @default(uuid()) @db.Char(36)
 
-  name      String @db.VarChar(20)
-  shortDesc String @db.VarChar(50)
+  name        String  @db.VarChar(50)
+  shortDesc   String? @db.VarChar(100)
+  description String? @db.VarChar(500)
 
   isDeleted    Boolean  @default(false)
   userCreated  String   @db.Char(36)
@@ -160,7 +160,7 @@ model BarcodeType {
   dtCreated    DateTime @default(now())
   dtModified   DateTime @updatedAt
 
-  customers Customer[]
+  // customers Customer[]
 }
 
 model Site {
@@ -178,10 +178,11 @@ model Site {
 
   cityId String? @db.Char(36)
 
-  code        String  @db.VarChar(20)
+  code        String  @db.VarChar(50)
+  codeSap     String? @db.VarChar(50)
   name        String  @db.VarChar(50)
-  shortName   String? @db.VarChar(30)
-  description String? @db.VarChar(255)
+  shortName   String? @db.VarChar(50)
+  description String? @db.VarChar(500)
 
   latitude         Float?
   longitude        Float?
@@ -215,8 +216,8 @@ model Mill {
   siteId    String @db.Char(36)
   companyId String @db.Char(36)
 
-  code String @db.VarChar(20)
-  name String @db.VarChar(20)
+  code String @db.VarChar(50)
+  name String @db.VarChar(50)
 
   isDeleted    Boolean  @default(false)
   userCreated  String   @db.Char(36)
@@ -232,8 +233,8 @@ model Weighbridge {
   id     String @id @default(uuid()) @db.Char(36)
   siteId String @db.Char(36)
 
-  code String @db.VarChar(20)
-  name String @db.VarChar(20)
+  code String @db.VarChar(50)
+  name String @db.VarChar(50)
 
   isDeleted    Boolean  @default(false)
   userCreated  String   @db.Char(36)
@@ -270,6 +271,7 @@ model User {
 
   username       String  @unique @db.VarChar(30)
   email          String  @unique @db.VarChar(50)
+  nik            String  @unique @db.VarChar(30)
   name           String  @db.VarChar(50)
   division       String  @db.VarChar(30)
   position       String  @db.VarChar(30)
@@ -294,13 +296,13 @@ model Product {
   refType Int     @default(0)
   refId   String? @db.VarChar(50)
 
-  productGroupId   String? @db.Char(36)
   productGroupName String?
 
-  code          String  @db.VarChar(20)
-  name          String  @db.VarChar(20)
-  shortName     String? @db.VarChar(20)
-  description   String? @db.VarChar(255)
+  code          String  @db.VarChar(50)
+  codeSap       String? @db.VarChar(50)
+  name          String  @db.VarChar(50)
+  shortName     String? @db.VarChar(50)
+  description   String? @db.VarChar(500)
   certification String? @db.VarChar(100)
 
   isDeleted    Boolean  @default(false)
@@ -308,8 +310,6 @@ model Product {
   userModified String   @db.Char(36)
   dtCreated    DateTime @default(now())
   dtModified   DateTime @updatedAt
-
-  productGroup ProductGroup? @relation(fields: [productGroupId], references: [id])
 
   storageTanks      StorageTank[]
   transactions      Transaction[]
@@ -319,16 +319,15 @@ model Product {
 model ProductGroup {
   id String @id @default(uuid()) @db.Char(36)
 
-  name        String  @db.VarChar(20)
-  description String? @db.VarChar(255)
+  name        String  @db.VarChar(50)
+  shortDesc   String? @db.VarChar(100)
+  description String? @db.VarChar(500)
 
   isDeleted    Boolean  @default(false)
   userCreated  String   @db.Char(36)
   userModified String   @db.Char(36)
   dtCreated    DateTime @default(now())
   dtModified   DateTime @updatedAt
-
-  products Product[]
 }
 
 model StorageTank {
@@ -338,20 +337,20 @@ model StorageTank {
 
   siteId    String? @db.Char(36)
   siteRefId String? @db.VarChar(50)
-  siteName  String? @db.VarChar(20)
+  siteName  String  @db.VarChar(50)
 
   stockOwnerId    String? @db.Char(36)
   stockOwnerRefId String? @db.VarChar(50)
-  stockOwnerName  String? @db.VarChar(20)
+  stockOwnerName  String? @db.VarChar(50)
 
   productId    String? @db.Char(36)
   productRefId String? @db.VarChar(50)
-  productName  String? @db.VarChar(20)
+  productName  String? @db.VarChar(50)
 
   code        String  @db.VarChar(50)
   name        String  @db.VarChar(50)
   shortName   String? @db.VarChar(50)
-  description String? @db.VarChar(255)
+  description String? @db.VarChar(500)
   capacity    Float?
   height      Float?
   sccModel    Int     @default(0)
@@ -377,13 +376,14 @@ model Driver {
 
   companyId    String? @db.Char(36)
   companyRefId String? @db.VarChar(50)
-  companyName  String? @db.VarChar(20)
+  companyName  String  @db.VarChar(50)
 
-  nik       String    @unique @db.VarChar(20)
-  name      String    @db.VarChar(20)
-  phone     String?   @db.VarChar(20)
+  nik       String    @unique @db.VarChar(30)
+  name      String    @db.VarChar(50)
+  address   String?   @db.VarChar(250)
   email     String?   @db.VarChar(30)
-  licenseNo String?   @db.VarChar(20)
+  phone     String?   @db.VarChar(30)
+  licenseNo String?   @db.VarChar(30)
   licenseED DateTime?
 
   isDeleted    Boolean  @default(false)
@@ -403,19 +403,19 @@ model TransportVehicle {
 
   companyId    String? @db.Char(36)
   companyRefId String? @db.VarChar(50)
-  companyName  String? @db.VarChar(20)
+  companyName  String  @db.VarChar(50)
 
   productId    String? @db.Char(36)
   productRefId String? @db.VarChar(50)
-  productName  String? @db.VarChar(20)
-  productCode  String? @db.VarChar(20)
+  productName  String  @db.VarChar(50)
+  productCode  String  @db.VarChar(50)
 
-  plateNo     String  @db.VarChar(20)
-  description String? @db.VarChar(255)
-  capacity    Float?
-  brand       String? @db.VarChar(20)
-  model       String? @db.VarChar(20)
-  sccModel    Int     @default(0)
+  plateNo  String  @db.VarChar(10)
+  capacity Float?
+  brand    String? @db.VarChar(30)
+  model    String? @db.VarChar(30)
+  sccModel Int     @default(0)
+  notes    String? @db.VarChar(1000)
 
   licenseED DateTime?
   keurED    DateTime?

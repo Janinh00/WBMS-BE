@@ -1,241 +1,109 @@
 import { Injectable } from '@nestjs/common';
+
 import { DbService } from 'src/db/db.service';
+import { CreateProductGroupDto, UpdateProductGroupDto } from './dto';
+import { ProductGroupEntity } from './entities';
 
 @Injectable()
 export class ProductGroupsService {
   constructor(private db: DbService) {}
 
-  async getAll() {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      records: {},
-      logs: {},
-    };
+  async getAll(): Promise<ProductGroupEntity[]> {
+    const records = await this.db.productGroup.findMany({
+      where: { isDeleted: false },
+    });
 
-    try {
-      const records = await this.db.productGroup.findMany({
-        where: { isDeleted: false },
-      });
-
-      dataOut.records = records;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return records;
   }
 
-  async getAllDeleted() {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      records: {},
-      logs: {},
-    };
+  async getAllDeleted(): Promise<ProductGroupEntity[]> {
+    const records = await this.db.productGroup.findMany({
+      where: { isDeleted: true },
+    });
 
-    try {
-      const records = await this.db.productGroup.findMany({
-        where: { isDeleted: true },
-      });
-
-      dataOut.records = records;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return records;
   }
 
-  async searchMany(query: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      records: {},
-      logs: {},
-    };
+  async getById(id: string): Promise<ProductGroupEntity> {
+    const record = await this.db.productGroup.findUnique({
+      where: { id },
+    });
 
+    return record;
+  }
+
+  async searchFirst(query: any): Promise<ProductGroupEntity> {
     query.where = { ...query.where, isDeleted: false };
 
-    try {
-      const records = await this.db.productGroup.findMany(query);
+    const record = await this.db.productGroup.findFirst(query);
 
-      dataOut.records = records;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 
-  async searchFirst(query: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      record: {},
-      logs: {},
-    };
-
+  async searchMany(query: any): Promise<ProductGroupEntity[]> {
     query.where = { ...query.where, isDeleted: false };
 
-    try {
-      const record = await this.db.productGroup.findFirst(query);
+    const records = await this.db.productGroup.findMany(query);
 
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return records;
   }
 
-  async searchDeleted(query: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      records: {},
-      logs: {},
-    };
-
+  async searchFirstDeleted(query: any): Promise<ProductGroupEntity> {
     query.where = { ...query.where, isDeleted: true };
 
-    try {
-      const records = await this.db.productGroup.findMany(query);
+    const record = await this.db.productGroup.findFirst(query);
 
-      dataOut.records = records;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 
-  async getById(id: string) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      record: {},
-      logs: {},
-    };
+  async searchManyDeleted(query: any): Promise<ProductGroupEntity[]> {
+    query.where = { ...query.where, isDeleted: true };
 
-    try {
-      const record = await this.db.productGroup.findUnique({
-        where: { id },
-      });
+    const records = await this.db.productGroup.findMany(query);
 
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return records;
   }
 
-  async create(dto: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      record: {},
-      logs: {},
+  async create(
+    dto: CreateProductGroupDto,
+    userId: string,
+  ): Promise<ProductGroupEntity> {
+    const params = {
+      data: {
+        ...dto,
+        userCreated: userId,
+        userModified: userId,
+      },
     };
 
-    try {
-      const params = {
-        data: {
-          ...dto,
-          userCreated: '',
-          userModified: '',
-        },
-      };
+    const record = await this.db.productGroup.create(params);
 
-      const record = await this.db.productGroup.create(params);
-
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 
-  async updateById(id: string, dto: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      record: {},
-      logs: {},
+  async updateById(
+    id: string,
+    dto: UpdateProductGroupDto,
+    userId: string,
+  ): Promise<ProductGroupEntity> {
+    const params = {
+      where: { id },
+      data: { ...dto, userModified: userId },
     };
 
-    try {
-      const params = {
-        where: { id },
-        data: { ...dto, userModified: '' },
-      };
+    const record = await this.db.productGroup.update(params);
 
-      const record = await this.db.productGroup.update(params);
-
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 
-  async deleteById(id: string) {
-    const dataOut = {
-      status: true,
-      message: '',
-      page: 0,
-      totalRecords: 0,
-      record: {},
-      logs: {},
+  async deleteById(id: string, userId: string): Promise<ProductGroupEntity> {
+    const params = {
+      where: { id },
+      data: { isDeleted: true, userModified: userId },
     };
 
-    try {
-      const params = {
-        where: { id },
-        data: { isDeleted: true, userModified: '' },
-      };
-      const record = await this.db.productGroup.update(params);
+    const record = await this.db.productGroup.update(params);
 
-      dataOut.record = record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return record;
   }
 }

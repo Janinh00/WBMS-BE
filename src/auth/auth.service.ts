@@ -17,7 +17,7 @@ export class AuthService {
     private db: DbService,
     private jwt: JwtService,
     private config: ConfigService,
-    private usersService: UsersService,
+    private usersService: UsersService
   ) {}
 
   async signup(dto: CreateUserDto): Promise<UserEntity> {
@@ -30,23 +30,21 @@ export class AuthService {
     // return tokens;
   }
 
-  async signin(
-    dto: SigninDto,
-    res: Response,
-  ): Promise<{ tokens: Tokens; user: any }> {
+  async signin(dto: SigninDto, res: Response): Promise<{ tokens: Tokens; user: any }> {
     // find the user by username
-    const user = await this.db.user.findUnique({
+    const user = await this.db.user.findFirst({
       where: {
-        username: dto.username,
+        OR: [{ username: dto.username }, { email: dto.email }, { nik: dto.nik }]
       },
       select: {
         id: true,
         username: true,
         email: true,
+        nik: true,
         name: true,
         role: true,
-        hashedPassword: true,
-      },
+        hashedPassword: true
+      }
     });
 
     // if user does not exist throw exception
@@ -56,8 +54,7 @@ export class AuthService {
     const pwMatches = await verify(user.hashedPassword, dto.password);
 
     // if password incorrect throw exception
-    if (!pwMatches)
-      throw new ForbiddenException('Invalid username or password.');
+    if (!pwMatches) throw new ForbiddenException('Invalid username or password.');
 
     // send back the user
     delete user.hashedPassword; // Tidak perlu lg karena sudah pakai return jwt
@@ -71,11 +68,11 @@ export class AuthService {
 
     res.cookie('at', tokens.access_token, {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'lax'
     });
     res.cookie('rt', tokens.refresh_token, {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'lax'
     });
 
     return { tokens, user };
@@ -92,12 +89,12 @@ export class AuthService {
       where: {
         id: userId,
         hashedRT: {
-          not: null,
-        },
+          not: null
+        }
       },
       data: {
-        hashedRT: null,
-      },
+        hashedRT: null
+      }
     });
 
     res.clearCookie('at');
@@ -106,15 +103,11 @@ export class AuthService {
     return updatedCount.count > 0 ? true : false;
   }
 
-  async refreshToken(
-    userId: string,
-    rt: string,
-    res: Response,
-  ): Promise<Tokens> {
+  async refreshToken(userId: string, rt: string, res: Response): Promise<Tokens> {
     const user = await this.db.user.findUnique({
       where: {
-        id: userId,
-      },
+        id: userId
+      }
     });
 
     if (!user) throw new ForbiddenException('Access Denied');
@@ -129,11 +122,11 @@ export class AuthService {
 
     res.cookie('at', tokens.access_token, {
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: 'strict'
     });
     res.cookie('rt', tokens.refresh_token, {
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: 'strict'
     });
 
     return tokens;
@@ -144,27 +137,24 @@ export class AuthService {
 
     await this.db.user.update({
       where: {
-        id: userId,
+        id: userId
       },
       data: {
-        hashedRT,
-      },
+        hashedRT
+      }
     });
   }
 
-  async signToken(
-    userId: string,
-    username: string,
-  ): Promise<{ access_token: string }> {
+  async signToken(userId: string, username: string): Promise<{ access_token: string }> {
     const payload = {
       sub: userId,
-      username,
+      username
     };
 
     const secret = this.config.get('WBMS_JWT_KEY');
     const token = await this.jwt.signAsync(payload, {
       secret,
-      expiresIn: '15m',
+      expiresIn: '15m'
     });
 
     return { access_token: token };
@@ -173,7 +163,7 @@ export class AuthService {
   async signTokens(userId: string, username: string): Promise<Tokens> {
     const payload = {
       sub: userId,
-      username,
+      username
     };
 
     const secret_at = this.config.get('WBMS_JWT_AT_KEY');
@@ -183,12 +173,12 @@ export class AuthService {
       // 60s*15 = 15m
       await this.jwt.signAsync(payload, {
         secret: secret_at,
-        expiresIn: 60 * 15,
+        expiresIn: 60 * 15
       }),
       await this.jwt.signAsync(payload, {
         secret: secret_rt,
-        expiresIn: 60 * 60 * 24 * 7,
-      }),
+        expiresIn: 60 * 60 * 24 * 7
+      })
     ]);
 
     return { access_token: at, refresh_token: rt };

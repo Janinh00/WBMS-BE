@@ -1,20 +1,10 @@
-import {
-  Controller,
-  Post,
-  Body,
-  HttpCode,
-  HttpStatus,
-  UseGuards,
-  Req,
-  Get,
-  Res,
-} from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards, Req, Get, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
-import { SigninDto } from './dto';
 import { AtGuard, RtGuard } from 'src/common/guards';
+import { SigninDto } from './dto';
 import { CreateUserDto } from 'src/users/dto';
 
 @ApiTags('Auth')
@@ -29,9 +19,9 @@ export class AuthController {
       status: true,
       message: '',
       data: {
-        user: null,
+        user: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -56,17 +46,17 @@ export class AuthController {
       status: true,
       message: '',
       data: {
-        user: null,
+        user: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
       const user = await this.authService.signup(dto);
 
-      const { username, email, name, division, position, phone } = user;
+      const { username, email, nik, name, division, position, phone } = user;
 
-      dataOut.data.user = { username, email, name, division, position, phone };
+      dataOut.data.user = { username, email, nik, name, division, position, phone };
     } catch (error) {
       dataOut.status = false;
       dataOut.message = error.message;
@@ -78,18 +68,15 @@ export class AuthController {
 
   @Post('signin')
   @HttpCode(HttpStatus.OK)
-  async signin(
-    @Body() dto: SigninDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async signin(@Body() dto: SigninDto, @Res({ passthrough: true }) res: Response) {
     const dataOut = {
       status: true,
       message: '',
       data: {
         tokens: null,
-        user: null,
+        user: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -111,15 +98,12 @@ export class AuthController {
   @Post('signout')
   @UseGuards(AtGuard)
   @HttpCode(HttpStatus.OK)
-  async signout(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async signout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const dataOut = {
       status: true,
       message: '',
       data: {},
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -143,25 +127,18 @@ export class AuthController {
   @Post('refresh')
   @UseGuards(RtGuard)
   @HttpCode(HttpStatus.OK)
-  async refreshToken(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async refreshToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const dataOut = {
       status: true,
       message: '',
       data: {
-        tokens: null,
+        tokens: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const tokens = await this.authService.refreshToken(
-        req.user['sub'],
-        req.user['refreshToken'],
-        res,
-      );
+      const tokens = await this.authService.refreshToken(req.user['sub'], req.user['refreshToken'], res);
 
       dataOut.data.tokens = tokens;
       dataOut.message = 'Token refreshed successfully.';

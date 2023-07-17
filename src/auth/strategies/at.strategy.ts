@@ -17,10 +17,7 @@ type JwtPayload = {
 export class AtStrategy extends PassportStrategy(Strategy, 'jwt-access') {
   constructor(config: ConfigService, private db: DbService) {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        AtStrategy.extractJWT,
-        ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ]),
+      jwtFromRequest: ExtractJwt.fromExtractors([AtStrategy.extractJWT, ExtractJwt.fromAuthHeaderAsBearerToken()]),
       ignoreExpiration: false,
       secretOrKey: config.get('WBMS_JWT_AT_KEY'),
     });

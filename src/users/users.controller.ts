@@ -56,17 +56,20 @@ export class UsersController {
       status: true,
       message: '',
       data: {
-        users: {
+        user: {
           page: 0,
           totalRecords: 0,
-          records: null,
+          records: [],
         },
       },
       logs: {},
     };
 
     try {
-      dataOut.data.users.records = await this.usersService.getAll();
+      const users = await this.usersService.getAll();
+
+      dataOut.data.user.totalRecords = users.length;
+      dataOut.data.user.records = users;
     } catch (error) {
       dataOut.status = false;
       dataOut.message = error.message;
@@ -82,17 +85,17 @@ export class UsersController {
       status: true,
       message: '',
       data: {
-        users: {
+        user: {
           page: 0,
           totalRecords: 0,
-          records: null,
+          records: [],
         },
       },
       logs: {},
     };
 
     try {
-      dataOut.data.users.records = await this.usersService.getAllDeleted();
+      dataOut.data.user.records = await this.usersService.getAllDeleted();
     } catch (error) {
       dataOut.status = false;
       dataOut.message = error.message;
@@ -108,7 +111,11 @@ export class UsersController {
       status: true,
       message: '',
       data: {
-        user: {},
+        user: {
+          page: 0,
+          totalRecords: 0,
+          records: [],
+        },
       },
       logs: {},
     };
@@ -118,14 +125,15 @@ export class UsersController {
 
       const { username, email, name, division, position, phone } = user;
 
-      dataOut.data.user = {
+      dataOut.data.user.records.push({
         username,
         email,
         name,
         division,
         position,
         phone,
-      };
+      });
+      dataOut.data.user.totalRecords = 1;
     } catch (error) {
       dataOut.status = false;
       dataOut.message = error.message;

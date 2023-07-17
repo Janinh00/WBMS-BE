@@ -17,7 +17,7 @@ export class TransactionService {
     private db: DbService,
     private config: ConfigService,
     private semaiAPI: SemaiService,
-    private configWbms: ConfigsService,
+    private configWbms: ConfigsService
   ) {}
 
   async getAll() {
@@ -27,7 +27,7 @@ export class TransactionService {
       page: 0,
       totalRecords: 0,
       records: {},
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -50,12 +50,12 @@ export class TransactionService {
       page: 0,
       totalRecords: 0,
       records: {},
-      logs: {},
+      logs: {}
     };
 
     try {
       const records = await this.db.transaction.findMany({
-        ...query,
+        ...query
       });
 
       dataOut.records = records;
@@ -73,12 +73,12 @@ export class TransactionService {
       status: true,
       message: '',
       record: {},
-      logs: {},
+      logs: {}
     };
 
     try {
       const record = await this.db.transaction.findFirst({
-        ...query,
+        ...query
       });
 
       dataOut.record = record;
@@ -98,9 +98,9 @@ export class TransactionService {
       data: {
         transaction: {},
         tType: '',
-        urlPath: '',
+        urlPath: ''
       },
-      logs: {},
+      logs: {}
     };
 
     const { content, tType } = body;
@@ -123,33 +123,22 @@ export class TransactionService {
       const urlMapping = this.configWbms.WbTransactionUrlMapping();
 
       try {
-        dataOut.data.tType =
-          statusMapping[tType][decodedQrcode.vehicleOperationStatus][
-            decodedQrcode.deliveryStatus
-          ];
+        dataOut.data.tType = statusMapping[tType][decodedQrcode.vehicleOperationStatus][decodedQrcode.deliveryStatus];
 
-        dataOut.data.urlPath =
-          urlMapping[tType][decodedQrcode.vehicleOperationStatus][
-            decodedQrcode.deliveryStatus
-          ];
+        dataOut.data.urlPath = urlMapping[tType][decodedQrcode.vehicleOperationStatus][decodedQrcode.deliveryStatus];
       } catch (error) {
-        throw new Error(
-          'Backend: Vehicle Operation Status atau Delivery Status tidak valid.',
-        );
+        throw new Error('Backend: Vehicle Operation Status atau Delivery Status tidak valid.');
       }
 
-      const transaction: DraftTransactionDto = this.copyQrToTransaction(
-        decodedQrcode,
-        tType,
-      );
+      const transaction: DraftTransactionDto = this.copyQrToTransaction(decodedQrcode, tType);
 
       const dtTransaction = await this.searchFirst({
         where: {
           transportVehiclePlateNo: transaction.transportVehiclePlateNo,
           progressStatus: { not: 15 },
-          tType,
+          tType
         },
-        orderBy: { bonTripNo: 'desc' },
+        orderBy: { bonTripNo: 'desc' }
       }).then((res) => res.record);
 
       // if (decodedQrcode.vehicleOperationStatus == 1) {
@@ -200,7 +189,7 @@ export class TransactionService {
       status: true,
       message: '',
       data: {},
-      logs: {},
+      logs: {}
     };
 
     const { content, tType } = query;
@@ -225,7 +214,7 @@ export class TransactionService {
       page: 0,
       totalRecords: 0,
       record: {},
-      logs: {},
+      logs: {}
     };
 
     const { key, sort = 'asc' } = query;
@@ -233,7 +222,7 @@ export class TransactionService {
     try {
       const record = await this.db.transaction.findFirst({
         where: { transportVehiclePlateNo: key },
-        orderBy: { id: sort },
+        orderBy: { id: sort }
       });
 
       dataOut.record = record;
@@ -253,12 +242,12 @@ export class TransactionService {
       page: 0,
       totalRecords: 0,
       record: {},
-      logs: {},
+      logs: {}
     };
 
     try {
       const record = await this.db.transaction.findUnique({
-        where: { id },
+        where: { id }
       });
 
       dataOut.record = record;
@@ -278,14 +267,14 @@ export class TransactionService {
       page: 0,
       totalRecords: 0,
       record: {},
-      logs: {},
+      logs: {}
     };
 
     try {
       console.log('create new data:');
       console.log(dto);
       const record = await this.db.transaction.create({
-        data: { ...dto, userCreated: '', userModified: '' },
+        data: { ...dto, userCreated: '', userModified: '' }
       });
 
       dataOut.record = record;
@@ -307,13 +296,13 @@ export class TransactionService {
       page: 0,
       totalRecords: 0,
       record: {},
-      logs: {},
+      logs: {}
     };
 
     try {
       const record = await this.db.transaction.update({
         where: { id },
-        data: { ...dto, userModified: '' },
+        data: { ...dto, userModified: '' }
       });
 
       dataOut.record = record;
@@ -340,9 +329,7 @@ export class TransactionService {
 
     transaction.deliveryOrderId = dto?.deliveryOrderId;
     transaction.deliveryOrderNo = dto?.deliveryOrderNo;
-    transaction.deliveryDate = dto.deliveryDate
-      ? moment(dto?.deliveryDate).toDate()
-      : null;
+    transaction.deliveryDate = dto.deliveryDate ? moment(dto?.deliveryDate).toDate() : null;
 
     transaction.transporterCompanyCode = dto.transporterCompanyCode;
     transaction.transporterCompanyName = dto.transporterCompanyFullName;
