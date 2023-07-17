@@ -11,12 +11,12 @@ export class SitesService {
   constructor(
     private db: DbService,
     private config: ConfigService,
-    private semaiService: SemaiService,
+    private semaiService: SemaiService
   ) {}
 
   async getAll(): Promise<SiteEntity[]> {
     const records = await this.db.site.findMany({
-      where: { isDeleted: false },
+      where: { isDeleted: false }
     });
 
     return records;
@@ -24,7 +24,7 @@ export class SitesService {
 
   async getAllDeleted(): Promise<SiteEntity[]> {
     const records = await this.db.site.findMany({
-      where: { isDeleted: true },
+      where: { isDeleted: true }
     });
 
     return records;
@@ -32,7 +32,7 @@ export class SitesService {
 
   async getById(id: string): Promise<SiteEntity> {
     const record = await this.db.site.findUnique({
-      where: { id },
+      where: { id }
     });
 
     return record;
@@ -75,8 +75,8 @@ export class SitesService {
       data: {
         ...dto,
         userCreated: userId,
-        userModified: userId,
-      },
+        userModified: userId
+      }
     };
 
     const record = await this.db.site.create(params);
@@ -84,14 +84,10 @@ export class SitesService {
     return record;
   }
 
-  async updateById(
-    id: string,
-    dto: UpdateSiteDto,
-    userId: string,
-  ): Promise<SiteEntity> {
+  async updateById(id: string, dto: UpdateSiteDto, userId: string): Promise<SiteEntity> {
     const params = {
       where: { id },
-      data: { ...dto, userModified: userId },
+      data: { ...dto, userModified: userId }
     };
 
     const record = await this.db.site.update(params);
@@ -102,7 +98,7 @@ export class SitesService {
   async deleteById(id: string, userId: string): Promise<SiteEntity> {
     const params = {
       where: { id },
-      data: { isDeleted: true, userModified: userId },
+      data: { isDeleted: true, userModified: userId }
     };
 
     const record = await this.db.site.update(params);
@@ -112,15 +108,16 @@ export class SitesService {
 
   async syncWithSemai() {
     const sites = await this.semaiService.sites().then((res) => res.data.sites);
-
+    console.log('Sites from semai:');
+    console.log(sites);
     if (sites?.length > 0)
       sites.forEach((site) => {
         this.db.site
           .findFirstOrThrow({
             where: {
               refType: 1,
-              refId: site.id,
-            },
+              refId: site.id
+            }
           })
           .then((res) => {
             this.db.site
@@ -144,8 +141,8 @@ export class SitesService {
 
                   isMill: site?.isMill,
 
-                  isDeleted: site?.isDeleted,
-                },
+                  isDeleted: !!site?.isDeleted
+                }
               })
               .then((res) => console.log(res));
           })
@@ -173,11 +170,11 @@ export class SitesService {
 
                   isMill: site?.isMill,
 
-                  isDeleted: site?.isDeleted,
+                  isDeleted: !!site?.isDeleted,
 
                   userCreated: '',
-                  userModified: '',
-                },
+                  userModified: ''
+                }
               })
               .then((res) => console.log(res));
           });

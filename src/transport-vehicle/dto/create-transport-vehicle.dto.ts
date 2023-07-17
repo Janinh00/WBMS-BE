@@ -18,6 +18,6 @@ export class CreateTransportVehicleDto {
   @ApiProperty({ required: false }) @IsInt() @IsNotEmpty() sccModel: number;
   @ApiProperty({ required: false }) @IsString() @IsOptional() notes?: string;
 
-  @ApiProperty({ required: false }) @IsDate() @IsOptional() licenseED?: Date;
-  @ApiProperty({ required: false }) @IsDate() @IsOptional() keurED?: Date;
+  @ApiProperty({ required: false }) @IsString() @IsOptional() licenseED?: Date;
+  @ApiProperty({ required: false }) @IsString() @IsOptional() keurED?: Date;
 }

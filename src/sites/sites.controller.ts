@@ -1,13 +1,4 @@
-import {
-  Body,
-  Get,
-  Param,
-  Post,
-  Controller,
-  Patch,
-  Delete,
-  Req,
-} from '@nestjs/common';
+import { Body, Get, Param, Post, Controller, Patch, Delete, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 
@@ -29,10 +20,10 @@ export class SitesController {
         site: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -59,10 +50,10 @@ export class SitesController {
         site: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -89,10 +80,10 @@ export class SitesController {
         site: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -116,9 +107,9 @@ export class SitesController {
       status: true,
       message: '',
       data: {
-        site: null,
+        site: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -144,10 +135,10 @@ export class SitesController {
         site: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -176,10 +167,10 @@ export class SitesController {
         site: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -206,10 +197,10 @@ export class SitesController {
         site: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -238,10 +229,10 @@ export class SitesController {
         site: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -265,9 +256,9 @@ export class SitesController {
       status: true,
       message: '',
       data: {
-        site: null,
+        site: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -286,18 +277,14 @@ export class SitesController {
 
   @Patch(':id')
   @ApiCreatedResponse({ type: SiteEntity })
-  async updateById(
-    @Param('id') id: string,
-    @Body() dto: UpdateSiteDto,
-    @Req() req: Request,
-  ) {
+  async updateById(@Param('id') id: string, @Body() dto: UpdateSiteDto, @Req() req: Request) {
     const dataOut = {
       status: true,
       message: '',
       data: {
-        site: null,
+        site: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -322,9 +309,9 @@ export class SitesController {
       status: true,
       message: '',
       data: {
-        site: null,
+        site: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {

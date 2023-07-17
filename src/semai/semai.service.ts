@@ -10,7 +10,10 @@ import { UpdateSemaiDto } from './dto/update-semai.dto';
 
 @Injectable()
 export class SemaiService {
-  constructor(private db: DbService, private config: ConfigService) {}
+  constructor(
+    private db: DbService,
+    private config: ConfigService
+  ) {}
 
   WBMS_SEMAI_API_URL = this.config.get('WBMS_SEMAI_API_URL');
   WBMS_SEMAI_API_KEY = this.config.get('WBMS_SEMAI_API_KEY');
@@ -19,7 +22,7 @@ export class SemaiService {
 
   httpsAgent = new https.Agent({
     cert: fs.readFileSync(this.WBMS_SEMAI_CERT),
-    key: fs.readFileSync(this.WBMS_SEMAI_KEY),
+    key: fs.readFileSync(this.WBMS_SEMAI_KEY)
   });
 
   // httpsAgent: this.httpsAgent,
@@ -27,8 +30,8 @@ export class SemaiService {
     baseURL: `${this.WBMS_SEMAI_API_URL}/`,
     httpsAgent: this.httpsAgent,
     headers: {
-      'x-api-key': this.WBMS_SEMAI_API_KEY,
-    },
+      'x-api-key': this.WBMS_SEMAI_API_KEY
+    }
   });
 
   create(createSemaiDto: DecodeQrcodeDto) {
@@ -56,15 +59,13 @@ export class SemaiService {
       status: true,
       message: '',
       data: {
-        products: [],
+        products: []
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const response = await this.api
-        .get(`products?pageSize=0`)
-        .then((res) => res?.data);
+      const response = await this.api.get(`products?pageSize=0`).then((res) => res?.data);
 
       if (!response.success) throw new Error(response?.message);
 
@@ -83,20 +84,22 @@ export class SemaiService {
       status: true,
       message: '',
       data: {
-        sites: [],
+        sites: []
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const response = await this.api
-        .get(`sites?pageSize=0`)
-        .then((res) => res?.data);
+      const response = await this.api.get(`sites?pageSize=0`).then((res) => res?.data);
+      console.log('response:');
+      console.log(response);
 
       if (!response.success) throw new Error(response?.message);
 
-      dataOut.data.sites = response.record;
+      dataOut.data.sites = response.records;
     } catch (error) {
+      console.log('error');
+      console.log(error);
       dataOut.status = false;
       dataOut.message = error.message;
       dataOut.logs = { error };
@@ -110,15 +113,13 @@ export class SemaiService {
       status: true,
       message: '',
       data: {
-        storageTanks: [],
+        storageTanks: []
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const response = await this.api
-        .get(`storage-tanks?pageSize=0`)
-        .then((res) => res?.data);
+      const response = await this.api.get(`storage-tanks?pageSize=0`).then((res) => res?.data);
 
       if (!response.success) throw new Error(response?.message);
 
@@ -137,15 +138,13 @@ export class SemaiService {
       status: true,
       message: '',
       data: {
-        transportVehicles: [],
+        transportVehicles: []
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const response = await this.api
-        .get(`transport-vehicles?pageSize=0`)
-        .then((res) => res?.data);
+      const response = await this.api.get(`transport-vehicles?pageSize=0`).then((res) => res?.data);
 
       if (!response.success) throw new Error(response?.message);
 
@@ -164,15 +163,13 @@ export class SemaiService {
       status: true,
       message: '',
       data: {
-        transporters: [],
+        transporters: []
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const response = await this.api
-        .get(`transporters?pageSize=0`)
-        .then((res) => res?.data);
+      const response = await this.api.get(`transporters?pageSize=0`).then((res) => res?.data);
 
       if (!response.success) throw new Error(response?.message);
 
@@ -191,15 +188,13 @@ export class SemaiService {
       status: true,
       message: '',
       data: {
-        vehicleOperators: [],
+        vehicleOperators: []
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const response = await this.api
-        .get(`vehicle-operators?pageSize=0`)
-        .then((res) => res?.data);
+      const response = await this.api.get(`vehicle-operators?pageSize=0`).then((res) => res?.data);
 
       if (!response.success) throw new Error(response?.message);
 
@@ -218,15 +213,13 @@ export class SemaiService {
       status: true,
       message: '',
       data: {
-        decodedQrcode: {},
+        decodedQrcode: {}
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const response = await this.api
-        .post(`cmd/decode-qrcode`, dto)
-        .then((res) => res?.data);
+      const response = await this.api.post(`cmd/decode-qrcode`, dto).then((res) => res?.data);
 
       if (!response.success) throw new Error(response?.message);
 
@@ -245,9 +238,9 @@ export class SemaiService {
       status: true,
       message: '',
       data: {
-        qrcode: {},
+        qrcode: {}
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -256,9 +249,7 @@ export class SemaiService {
 
       console.log(dto);
 
-      const response = await this.api
-        .get(`cmd/encode-qrcode/${orderId}/${functionCode}`)
-        .then((res) => res?.data);
+      const response = await this.api.get(`cmd/encode-qrcode/${orderId}/${functionCode}`).then((res) => res?.data);
 
       if (!response.success) throw new Error(response?.message);
 
@@ -277,17 +268,15 @@ export class SemaiService {
       status: true,
       message: '',
       data: {
-        transaction: {},
+        transaction: {}
       },
-      logs: {},
+      logs: {}
     };
 
     try {
       console.log(dto);
 
-      const response = await this.api
-        .post(`cmd/dispatch-delivery`, dto)
-        .then((res) => res?.data);
+      const response = await this.api.post(`cmd/dispatch-delivery`, dto).then((res) => res?.data);
 
       if (!response.success) throw new Error(response?.message);
 
@@ -306,15 +295,13 @@ export class SemaiService {
       status: true,
       message: '',
       data: {
-        transaction: {},
+        transaction: {}
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const response = await this.api
-        .post(`cmd/reject-delivery`, dto)
-        .then((res) => res?.data);
+      const response = await this.api.post(`cmd/reject-delivery`, dto).then((res) => res?.data);
 
       if (!response.success) throw new Error(response?.message);
 
@@ -333,15 +320,13 @@ export class SemaiService {
       status: true,
       message: '',
       data: {
-        transaction: {},
+        transaction: {}
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const response = await this.api
-        .post(`cmd/close-delivery-as-canceled`, dto)
-        .then((res) => res?.data);
+      const response = await this.api.post(`cmd/close-delivery-as-canceled`, dto).then((res) => res?.data);
 
       if (!response.success) throw new Error(response?.message);
 
@@ -360,15 +345,13 @@ export class SemaiService {
       status: true,
       message: '',
       data: {
-        transaction: {},
+        transaction: {}
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const response = await this.api
-        .post(`cmd/close-delivery-as-accepted`, dto)
-        .then((res) => res?.data);
+      const response = await this.api.post(`cmd/close-delivery-as-accepted`, dto).then((res) => res?.data);
 
       if (!response.success) throw new Error(response?.message);
 
@@ -387,18 +370,16 @@ export class SemaiService {
       status: true,
       message: '',
       data: {
-        transaction: {},
+        transaction: {}
       },
-      logs: {},
+      logs: {}
     };
 
     try {
       console.log('data in');
       console.log(dto);
 
-      const response = await this.api
-        .post(`cmd/close-delivery-as-rejected`, dto)
-        .then((res) => res?.data);
+      const response = await this.api.post(`cmd/close-delivery-as-rejected`, dto).then((res) => res?.data);
 
       console.log('hasil api close-delivery-as-rejected');
       console.log(response);
@@ -423,15 +404,13 @@ export class SemaiService {
       status: true,
       message: '',
       data: {
-        transaction: {},
+        transaction: {}
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const response = await this.api
-        .post(`cmd/validate-dispatch-delivery`, dto)
-        .then((res) => res?.data);
+      const response = await this.api.post(`cmd/validate-dispatch-delivery`, dto).then((res) => res?.data);
 
       if (!response.success) throw new Error(response?.message);
 
@@ -450,15 +429,13 @@ export class SemaiService {
       status: true,
       message: '',
       data: {
-        transaction: {},
+        transaction: {}
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const response = await this.api
-        .post(`cmd/validate-unloading`, dto)
-        .then((res) => res?.data);
+      const response = await this.api.post(`cmd/validate-unloading`, dto).then((res) => res?.data);
 
       if (!response.success) throw new Error(response?.message);
 
