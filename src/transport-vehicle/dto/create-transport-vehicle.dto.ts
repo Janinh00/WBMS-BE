@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsUUID, IsOptional, IsInt, IsDate, IsDateString } from 'class-validator';
+import { IsString, IsNotEmpty, IsUUID, IsOptional, IsInt, IsDate, IsDateString, IsNumber } from 'class-validator';
 
 export class CreateTransportVehicleDto {
   @ApiProperty() @IsUUID() @IsNotEmpty() companyId?: string;
@@ -12,7 +12,7 @@ export class CreateTransportVehicleDto {
   @ApiProperty() @IsString() @IsNotEmpty() productCode: string;
 
   @ApiProperty() @IsString() @IsNotEmpty() plateNo: string;
-  @ApiProperty({ required: false }) @IsString() @IsOptional() capacity?: number;
+  @ApiProperty({ required: false }) @IsNumber() @IsOptional() capacity?: number;
   @ApiProperty({ required: false }) @IsString() @IsOptional() brand?: string;
   @ApiProperty({ required: false }) @IsString() @IsOptional() model?: string;
   @ApiProperty({ required: false }) @IsInt() @IsNotEmpty() sccModel: number;

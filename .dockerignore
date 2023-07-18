@@ -1,0 +1,15 @@
+.dockerignore
+.env
+.eslintrc.js
+.git
+.gitignore
+.prettierrc
+
+build
+dist
+test
+node_modules
+
+Dockerfile
+Dockerfile.prod
+README.md

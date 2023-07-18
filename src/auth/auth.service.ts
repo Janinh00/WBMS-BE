@@ -57,7 +57,8 @@ export class AuthService {
     if (!pwMatches) throw new ForbiddenException('Invalid username or password.');
 
     // send back the user
-    delete user.hashedPassword; // Tidak perlu lg karena sudah pakai return jwt
+    // delete user.hashedPassword; // Tidak perlu lg karena sudah pakai return jwt
+    // return user; // Tidak perlu lg karena sudah pakai return jwt
 
     // using access_token and refresh_token now, not just single jwt
     // return this.signToken(user.id, user.username);
