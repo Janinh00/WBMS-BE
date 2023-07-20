@@ -21,7 +21,9 @@ export class AuthService {
   ) {}
 
   async signup(dto: CreateUserDto): Promise<UserEntity> {
-    const user = await this.usersService.create(dto);
+    const userId = '';
+
+    const user = await this.usersService.create(dto, userId);
 
     return user;
 
@@ -57,7 +59,7 @@ export class AuthService {
     if (!pwMatches) throw new ForbiddenException('Invalid username or password.');
 
     // send back the user
-    // delete user.hashedPassword; // Tidak perlu lg karena sudah pakai return jwt
+    delete user.hashedPassword;
     // return user; // Tidak perlu lg karena sudah pakai return jwt
 
     // using access_token and refresh_token now, not just single jwt

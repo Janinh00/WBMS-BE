@@ -9,25 +9,19 @@ export class ProvincesService {
   constructor(private db: DbService) {}
 
   async getAll(): Promise<ProvinceEntity[]> {
-    const records = await this.db.province.findMany({
-      where: { isDeleted: false },
-    });
+    const records = await this.db.province.findMany({ where: { isDeleted: false } });
 
     return records;
   }
 
   async getAllDeleted(): Promise<ProvinceEntity[]> {
-    const records = await this.db.province.findMany({
-      where: { isDeleted: true },
-    });
+    const records = await this.db.province.findMany({ where: { isDeleted: true } });
 
     return records;
   }
 
   async getById(id: string): Promise<ProvinceEntity> {
-    const record = await this.db.province.findUnique({
-      where: { id },
-    });
+    const record = await this.db.province.findUnique({ where: { id } });
 
     return record;
   }
@@ -69,8 +63,8 @@ export class ProvincesService {
       data: {
         ...dto,
         userCreated: userId,
-        userModified: userId,
-      },
+        userModified: userId
+      }
     };
 
     const record = await this.db.province.create(params);
@@ -81,7 +75,7 @@ export class ProvincesService {
   async updateById(id: string, dto: UpdateProvinceDto, userId: string): Promise<ProvinceEntity> {
     const params = {
       where: { id },
-      data: { ...dto, userModified: userId },
+      data: { ...dto, userModified: userId }
     };
 
     const record = await this.db.province.update(params);
@@ -92,7 +86,7 @@ export class ProvincesService {
   async deleteById(id: string, userId: string): Promise<ProvinceEntity> {
     const params = {
       where: { id },
-      data: { isDeleted: true, userModified: userId },
+      data: { isDeleted: true, userModified: userId }
     };
 
     const record = await this.db.province.update(params);

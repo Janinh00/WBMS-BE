@@ -9,7 +9,7 @@ import {
   Delete,
   Patch,
   HttpStatus,
-  HttpCode,
+  HttpCode
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -30,9 +30,9 @@ export class UsersController {
       status: true,
       message: '',
       data: {
-        user: null,
+        user: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -59,10 +59,10 @@ export class UsersController {
         user: {
           page: 0,
           totalRecords: 0,
-          records: [],
-        },
+          records: []
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -88,10 +88,10 @@ export class UsersController {
         user: {
           page: 0,
           totalRecords: 0,
-          records: [],
-        },
+          records: []
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -114,10 +114,10 @@ export class UsersController {
         user: {
           page: 0,
           totalRecords: 0,
-          records: [],
-        },
+          records: []
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -131,7 +131,7 @@ export class UsersController {
         name,
         division,
         position,
-        phone,
+        phone
       });
       dataOut.data.user.totalRecords = 1;
     } catch (error) {
@@ -165,18 +165,19 @@ export class UsersController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() dto: CreateUserDto) {
+  async create(@Body() dto: CreateUserDto, @Req() req: Request) {
     const dataOut = {
       status: true,
       message: '',
       data: {
-        user: null,
+        user: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const user = await this.usersService.create(dto);
+      const userId = ''; //req.user['id'];
+      const user = await this.usersService.create(dto, userId);
 
       const { username, email, name, division, position, phone } = user;
 
@@ -191,18 +192,19 @@ export class UsersController {
   }
 
   @Patch(':id')
-  async updateById(@Param('id') userId: string, @Body() dto: UpdateUserDto) {
+  async updateById(@Param('id') userId: string, @Body() dto: UpdateUserDto, @Req() req: Request) {
     const dataOut = {
       status: true,
       message: '',
       data: {
-        user: null,
+        user: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const user = await this.usersService.updateById(userId, dto);
+      const userId = ''; //req.user['id'];
+      const user = await this.usersService.updateById(userId, dto, userId);
 
       const { username, email, name, division, position, phone } = user;
 
@@ -217,18 +219,19 @@ export class UsersController {
   }
 
   @Delete(':id')
-  async deleteById(@Param('id') userId: string) {
+  async deleteById(@Param('id') id: string, @Req() req: Request) {
     const dataOut = {
       status: true,
       message: '',
       data: {
-        user: null,
+        user: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const user = await this.usersService.deleteById(userId);
+      const userId = ''; // req.user['id'];
+      const user = await this.usersService.deleteById(id, userId);
 
       const { username, email, name, isDisabled, isDeleted } = user;
 
@@ -236,7 +239,7 @@ export class UsersController {
     } catch (error) {
       dataOut.status = false;
       dataOut.message = error.message;
-      dataOut.logs = { ...dataOut.logs, reqParam: { userId }, error };
+      dataOut.logs = { ...dataOut.logs, reqParams: { id }, error };
     }
 
     return dataOut;

@@ -21,10 +21,10 @@ export class ProvincesController {
         province: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -51,10 +51,10 @@ export class ProvincesController {
         province: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -78,9 +78,9 @@ export class ProvincesController {
       status: true,
       message: '',
       data: {
-        province: null,
+        province: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -106,10 +106,10 @@ export class ProvincesController {
         province: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -138,10 +138,10 @@ export class ProvincesController {
         province: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -168,10 +168,10 @@ export class ProvincesController {
         province: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -200,10 +200,10 @@ export class ProvincesController {
         province: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -227,9 +227,9 @@ export class ProvincesController {
       status: true,
       message: '',
       data: {
-        province: null,
+        province: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -253,14 +253,13 @@ export class ProvincesController {
       status: true,
       message: '',
       data: {
-        province: null,
+        province: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
       const userId = ''; //req.user['id'];
-      console.log(id);
       const record = await this.provincesService.updateById(id, dto, userId);
 
       dataOut.data.province = record;
@@ -280,9 +279,9 @@ export class ProvincesController {
       status: true,
       message: '',
       data: {
-        province: null,
+        province: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
@@ -293,7 +292,7 @@ export class ProvincesController {
     } catch (error) {
       dataOut.status = false;
       dataOut.message = error.message;
-      dataOut.logs = { ...dataOut.logs, param: id, error };
+      dataOut.logs = { ...dataOut.logs, reqParams: { id }, error };
     }
 
     return dataOut;

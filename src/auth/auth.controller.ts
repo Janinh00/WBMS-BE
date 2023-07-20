@@ -54,9 +54,7 @@ export class AuthController {
     try {
       const user = await this.authService.signup(dto);
 
-      const { username, email, nik, name, division, position, phone } = user;
-
-      dataOut.data.user = { username, email, nik, name, division, position, phone };
+      dataOut.data.user = user;
     } catch (error) {
       dataOut.status = false;
       dataOut.message = error.message;

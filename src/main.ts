@@ -6,20 +6,17 @@ import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
 import { DbService } from './db/db.service';
+import { ENV } from './utils/constants';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   printEnvVar();
 
-  const config = new ConfigService();
-
-  const WBMS_APP_PORT = config.get('WBMS_APP_PORT');
-
   app.enableCors({
     origin: ['http://localhost:3000', 'http://192.168.1.122:3000'],
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-    credentials: true,
+    credentials: true
   });
   app.use(cookieParser());
 
@@ -27,8 +24,8 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: false, // Jika ingin diblock data selain data di dto harus dirubah whitelist = true
       transform: true, // Jika true, maka DataIn akan di transform sesuai dengan deklarinnya, tidak perlu menggunakan ParseXXXPipe
-      forbidNonWhitelisted: true,
-    }),
+      forbidNonWhitelisted: true
+    })
   );
 
   const prismaService = app.get(DbService);
@@ -42,10 +39,10 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, configSwagger);
   SwaggerModule.setup('api', app, document, {
-    customSiteTitle: 'DSN - Weighbridge Management System',
+    customSiteTitle: 'DSN - Weighbridge Management System'
   });
 
-  await app.listen(WBMS_APP_PORT || 6001);
+  await app.listen(ENV.WBMS_APP_PORT || 6001);
 }
 bootstrap();
 
@@ -72,6 +69,9 @@ const printEnvVar = () => {
 
   const WBMS_SEMAI_API_URL = config.get('WBMS_SEMAI_API_URL');
   const WBMS_SEMAI_API_KEY = config.get('WBMS_SEMAI_API_KEY');
+
+  console.log('ENV:');
+  console.log(ENV);
 
   console.log(`WBMS_APP_DOMAIN: ${WBMS_APP_DOMAIN}`);
   console.log(`WBMS_APP_PORT: ${WBMS_APP_PORT}`);
