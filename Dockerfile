@@ -12,7 +12,7 @@ COPY --chown=node:node package*.json ./
 
 # In order to run `npm run build` we need access to the Nest CLI which is a dev dependency.
 # Install app dependencies using the `npm ci` command instead of `npm install`
-RUN npm ci install
+RUN npm ci
 
 # Bundle app source
 COPY --chown=node:node .env.production ./.env
@@ -32,7 +32,7 @@ RUN npm ci --only=production && npm cache clean --force
 # Use the node user from the image (instead of the root user)
 USER node
 
-
+################################################################################
 # production environment
 FROM node:lts-alpine3.17 as production
 # Create app directory

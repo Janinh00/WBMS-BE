@@ -25,6 +25,7 @@ export class AuthController {
     };
 
     try {
+      console.log(req.user);
       const user = await this.authService.getIAM(req.user['id']);
 
       const { username, email, name, division, position, phone } = user;

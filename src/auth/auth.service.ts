@@ -59,24 +59,18 @@ export class AuthService {
     if (!pwMatches) throw new ForbiddenException('Invalid username or password.');
 
     // send back the user
-    delete user.hashedPassword;
-    // return user; // Tidak perlu lg karena sudah pakai return jwt
+    delete user.hashedPassword; // Didelete karena risk untuk dimanfaatkan
+    // return user; // Tidak perlu lg karena sudah pakai return jwt token
 
-    // using access_token and refresh_token now, not just single jwt
+    // using access_token and refresh_token now, not just single jwt token
     // return this.signToken(user.id, user.username);
 
     const tokens = await this.signTokens(user.id, user.username);
 
-    await this.updateRtHash(user.id, tokens.refresh_token);
+    await this.updateRtHash(user.id, tokens.refresh_token); // Update (men-set) hashedRT di user yang login
 
-    res.cookie('at', tokens.access_token, {
-      httpOnly: true,
-      sameSite: 'lax'
-    });
-    res.cookie('rt', tokens.refresh_token, {
-      httpOnly: true,
-      sameSite: 'lax'
-    });
+    res.cookie('at', tokens.access_token, { httpOnly: true, sameSite: 'lax', maxAge: 5 * 60 * 1000 });
+    res.cookie('rt', tokens.refresh_token, { httpOnly: true, sameSite: 'lax', maxAge: 7 * 24 * 60 * 60 * 1000 });
 
     return { tokens, user };
   }
@@ -123,65 +117,40 @@ export class AuthService {
 
     await this.updateRtHash(user.id, tokens.refresh_token);
 
-    res.cookie('at', tokens.access_token, {
-      httpOnly: true,
-      sameSite: 'strict'
-    });
-    res.cookie('rt', tokens.refresh_token, {
-      httpOnly: true,
-      sameSite: 'strict'
-    });
+    res.cookie('at', tokens.access_token, { httpOnly: true, sameSite: 'lax', maxAge: 5 * 60 * 1000 });
+    res.cookie('rt', tokens.refresh_token, { httpOnly: true, sameSite: 'lax', maxAge: 7 * 24 * 60 * 60 * 1000 });
 
     return tokens;
   }
 
   async updateRtHash(userId: string, rt: string) {
-    const hashedRT = await hash(rt);
+    const hashedRT = await hash(rt); //refreshToken (RT) dihash ketika disave di DB
 
     await this.db.user.update({
-      where: {
-        id: userId
-      },
-      data: {
-        hashedRT
-      }
+      where: { id: userId },
+      data: { hashedRT }
     });
   }
 
   async signToken(userId: string, username: string): Promise<{ access_token: string }> {
-    const payload = {
-      sub: userId,
-      username
-    };
+    const payload = { sub: userId, username };
 
     const secret = this.config.get('WBMS_JWT_KEY');
-    const token = await this.jwt.signAsync(payload, {
-      secret,
-      expiresIn: '15m'
-    });
+    const token = await this.jwt.signAsync(payload, { secret, expiresIn: '15m' });
 
     return { access_token: token };
   }
 
   async signTokens(userId: string, username: string): Promise<Tokens> {
-    const payload = {
-      sub: userId,
-      username
-    };
+    const payload = { sub: userId, username };
 
     const secret_at = this.config.get('WBMS_JWT_AT_KEY');
     const secret_rt = this.config.get('WBMS_JWT_RT_KEY');
 
     const [at, rt] = await Promise.all([
       // 60s*15 = 15m
-      await this.jwt.signAsync(payload, {
-        secret: secret_at,
-        expiresIn: 60 * 15
-      }),
-      await this.jwt.signAsync(payload, {
-        secret: secret_rt,
-        expiresIn: 60 * 60 * 24 * 7
-      })
+      await this.jwt.signAsync(payload, { secret: secret_at, expiresIn: 1 * 60 }),
+      await this.jwt.signAsync(payload, { secret: secret_rt, expiresIn: 7 * 24 * 60 * 60 })
     ]);
 
     return { access_token: at, refresh_token: rt };

@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { DbService } from 'src/db/db.service';
+import { WBMS_JWT_KEY } from 'src/utils/constants';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  constructor(config: ConfigService, private db: DbService) {
+  constructor(private db: DbService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: config.get('WBMS_JWT_KEY'),
+      secretOrKey: WBMS_JWT_KEY
     });
   }
 
@@ -23,8 +23,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         id: true,
         username: true,
         email: true,
-        role: true,
-      },
+        role: true
+      }
     });
 
     return user;

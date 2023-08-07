@@ -1,12 +1,13 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+// import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
 import { DbService } from './db/db.service';
 import { ENV } from './utils/constants';
+import SwaggerDocumentation from './settings/swagger.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,38 +19,46 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     credentials: true
   });
+
   app.use(cookieParser());
 
+  // app.setGlobalPrefix('api');
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: false, // Jika ingin diblock data selain data di dto harus dirubah whitelist = true
       transform: true, // Jika true, maka DataIn akan di transform sesuai dengan deklarinnya, tidak perlu menggunakan ParseXXXPipe
-      forbidNonWhitelisted: true
+      forbidNonWhitelisted: true,
+      transformOptions: {
+        enableImplicitConversion: true
+      }
     })
   );
 
   const prismaService = app.get(DbService);
   await prismaService.enableShutdownHooks(app);
 
-  const configSwagger = new DocumentBuilder()
-    .setTitle('Weighbridge Management System')
-    .setDescription('Weighbridge Management System API Documentation')
-    .setVersion('0.1')
-    .build();
+  // const configSwagger = new DocumentBuilder()
+  //   .setTitle('Weighbridge Management System')
+  //   .setDescription('Weighbridge Management System API Documentation')
+  //   .setVersion('0.1')
+  //   .build();
 
-  const document = SwaggerModule.createDocument(app, configSwagger);
-  SwaggerModule.setup('api', app, document, {
-    customSiteTitle: 'DSN - Weighbridge Management System'
-  });
+  // const document = SwaggerModule.createDocument(app, configSwagger);
+  // SwaggerModule.setup('api', app, document, {
+  //   customSiteTitle: 'DSN - Weighbridge Management System'
+  // });
+
+  const swaggerDoc = new SwaggerDocumentation(app);
+  swaggerDoc.serve();
 
   await app.listen(ENV.WBMS_APP_PORT || 6001);
 }
+
 bootstrap();
 
 const printEnvVar = () => {
   const config = new ConfigService();
 
-  const WBMS_APP_DOMAIN = config.get('WBMS_APP_DOMAIN');
   const WBMS_APP_PORT = config.get('WBMS_APP_PORT');
 
   const WBMS_DB_DOMAIN = config.get('WBMS_DB_DOMAIN');
@@ -73,7 +82,6 @@ const printEnvVar = () => {
   console.log('ENV:');
   console.log(ENV);
 
-  console.log(`WBMS_APP_DOMAIN: ${WBMS_APP_DOMAIN}`);
   console.log(`WBMS_APP_PORT: ${WBMS_APP_PORT}`);
   console.log('==============');
   console.log(`WBMS_DB_DOMAIN: ${WBMS_DB_DOMAIN}`);
