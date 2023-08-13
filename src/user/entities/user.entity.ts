@@ -4,6 +4,8 @@ import { User } from '@prisma/client';
 export class UserEntity implements User {
   @ApiProperty() id: string;
 
+  @ApiProperty() roleId: string | null;
+
   @ApiProperty() username: string;
   @ApiProperty() email: string;
   @ApiProperty() nik: string;
@@ -11,12 +13,10 @@ export class UserEntity implements User {
   @ApiProperty() name: string;
   @ApiProperty() division: string;
   @ApiProperty() position: string;
-  @ApiProperty() phone: string;
+  @ApiProperty() phone: string | null;
 
   @ApiProperty() hashedPassword: string;
   @ApiProperty() hashedRT: string | null;
-
-  @ApiProperty() role: string;
 
   @ApiProperty() isEmailVerified: boolean;
   @ApiProperty() isLDAPUser: boolean;
@@ -24,8 +24,8 @@ export class UserEntity implements User {
 
   @ApiProperty() isDeleted: boolean;
 
-  userCreated: string;
-  userModified: string;
+  userCreated: string | null;
+  userModified: string | null;
   dtCreated: Date;
   dtModified: Date;
 }

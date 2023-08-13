@@ -5,12 +5,12 @@ import { CreateCompanyDto, UpdateCompanyDto } from './dto';
 import { CompanyEntity } from './entities';
 
 @Injectable()
-export class CompaniesService {
+export class CompanyService {
   constructor(private db: DbService) {}
 
   async getAll(): Promise<CompanyEntity[]> {
     const records = await this.db.company.findMany({
-      where: { isDeleted: false },
+      where: { isDeleted: false }
     });
 
     return records;
@@ -18,7 +18,7 @@ export class CompaniesService {
 
   async getAllDeleted(): Promise<CompanyEntity[]> {
     const records = await this.db.company.findMany({
-      where: { isDeleted: true },
+      where: { isDeleted: true }
     });
 
     return records;
@@ -26,7 +26,7 @@ export class CompaniesService {
 
   async getById(id: string): Promise<CompanyEntity> {
     const record = await this.db.company.findUnique({
-      where: { id },
+      where: { id }
     });
 
     return record;
@@ -69,8 +69,8 @@ export class CompaniesService {
       data: {
         ...dto,
         userCreated: userId,
-        userModified: userId,
-      },
+        userModified: userId
+      }
     };
 
     const record = await this.db.company.create(params);
@@ -78,14 +78,10 @@ export class CompaniesService {
     return record;
   }
 
-  async updateById(
-    id: string,
-    dto: UpdateCompanyDto,
-    userId: string,
-  ): Promise<CompanyEntity> {
+  async updateById(id: string, dto: UpdateCompanyDto, userId: string): Promise<CompanyEntity> {
     const params = {
       where: { id },
-      data: { ...dto, userModified: userId },
+      data: { ...dto, userModified: userId }
     };
 
     const record = await this.db.company.update(params);
@@ -96,7 +92,7 @@ export class CompaniesService {
   async deleteById(id: string, userId: string): Promise<CompanyEntity> {
     const params = {
       where: { id },
-      data: { isDeleted: true, userModified: userId },
+      data: { isDeleted: true, userModified: userId }
     };
 
     const record = await this.db.company.update(params);

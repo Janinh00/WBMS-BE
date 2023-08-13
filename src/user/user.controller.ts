@@ -14,7 +14,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 
-import { UsersService } from './users.service';
+import { UserService } from './user.service';
 import { AtGuard } from 'src/common/guards';
 import { CreateUserDto, UpdateUserDto } from './dto';
 
@@ -22,7 +22,7 @@ import { CreateUserDto, UpdateUserDto } from './dto';
 @UseGuards(AtGuard)
 @Controller('api/users')
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(private usersService: UserService) {}
 
   @Get('iam')
   async getIAM(@Req() req: Request) {

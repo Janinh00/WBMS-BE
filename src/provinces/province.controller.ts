@@ -2,14 +2,14 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/
 import { Request } from 'express';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 
-import { ProvincesService } from './provinces.service';
+import { ProvinceService } from './province.service';
 import { CreateProvinceDto, UpdateProvinceDto } from './dto';
 import { ProvinceEntity } from './entities';
 
 @ApiTags('Provinces')
 @Controller('api/provinces')
-export class ProvincesController {
-  constructor(private readonly provincesService: ProvincesService) {}
+export class ProvinceController {
+  constructor(private readonly provinceService: ProvinceService) {}
 
   @Get('')
   @ApiCreatedResponse({ type: ProvinceEntity, isArray: true })
@@ -28,7 +28,7 @@ export class ProvincesController {
     };
 
     try {
-      const records = await this.provincesService.getAll();
+      const records = await this.provinceService.getAll();
 
       dataOut.data.province.records = records;
       dataOut.data.province.totalRecords = records.length;
@@ -58,7 +58,7 @@ export class ProvincesController {
     };
 
     try {
-      const records = await this.provincesService.getAllDeleted();
+      const records = await this.provinceService.getAllDeleted();
 
       dataOut.data.province.records = records;
       dataOut.data.province.totalRecords = records.length;
@@ -84,7 +84,7 @@ export class ProvincesController {
     };
 
     try {
-      const record = await this.provincesService.getById(id);
+      const record = await this.provinceService.getById(id);
 
       dataOut.data.province = record;
     } catch (error) {
@@ -103,21 +103,16 @@ export class ProvincesController {
       status: true,
       message: '',
       data: {
-        province: {
-          records: [],
-          totalRecords: 0,
-          page: 0
-        }
+        province: null
       },
       logs: {}
     };
 
     try {
-      const record = await this.provincesService.searchFirst(query);
+      const record = await this.provinceService.searchFirst(query);
 
       if (record) {
-        dataOut.data.province.records.push(record);
-        dataOut.data.province.totalRecords = 1;
+        dataOut.data.province = record;
       }
     } catch (error) {
       dataOut.status = false;
@@ -145,7 +140,7 @@ export class ProvincesController {
     };
 
     try {
-      const records = await this.provincesService.searchMany(query);
+      const records = await this.provinceService.searchMany(query);
 
       dataOut.data.province.records = records;
       dataOut.data.province.totalRecords = records.length;
@@ -165,21 +160,16 @@ export class ProvincesController {
       status: true,
       message: '',
       data: {
-        province: {
-          records: [],
-          totalRecords: 0,
-          page: 0
-        }
+        province: null
       },
       logs: {}
     };
 
     try {
-      const record = await this.provincesService.searchFirstDeleted(query);
+      const record = await this.provinceService.searchFirstDeleted(query);
 
       if (record) {
-        dataOut.data.province.records.push(record);
-        dataOut.data.province.totalRecords = 1;
+        dataOut.data.province = record;
       }
     } catch (error) {
       dataOut.status = false;
@@ -207,7 +197,7 @@ export class ProvincesController {
     };
 
     try {
-      const records = await this.provincesService.searchManyDeleted(query);
+      const records = await this.provinceService.searchManyDeleted(query);
 
       dataOut.data.province.records = records;
       dataOut.data.province.totalRecords = records.length;
@@ -234,7 +224,7 @@ export class ProvincesController {
 
     try {
       const userId = ''; //req.user['id'];
-      const record = await this.provincesService.create(dto, userId);
+      const record = await this.provinceService.create(dto, userId);
 
       dataOut.data.province = record;
     } catch (error) {
@@ -260,7 +250,7 @@ export class ProvincesController {
 
     try {
       const userId = ''; //req.user['id'];
-      const record = await this.provincesService.updateById(id, dto, userId);
+      const record = await this.provinceService.updateById(id, dto, userId);
 
       dataOut.data.province = record;
     } catch (error) {
@@ -286,7 +276,7 @@ export class ProvincesController {
 
     try {
       const userId = ''; // req.user['id'];
-      const record = await this.provincesService.deleteById(id, userId);
+      const record = await this.provinceService.deleteById(id, userId);
 
       dataOut.data.province = record;
     } catch (error) {

@@ -266,31 +266,6 @@ model Config {
   site Site @relation(fields: [id], references: [id])
 }
 
-model User {
-  id String @id @default(uuid()) @db.Char(36)
-
-  username       String  @unique @db.VarChar(30)
-  email          String  @unique @db.VarChar(50)
-  nik            String  @unique @db.VarChar(30)
-  name           String  @db.VarChar(50)
-  division       String  @db.VarChar(30)
-  position       String  @db.VarChar(30)
-  phone          String? @db.VarChar(30)
-  hashedPassword String  @db.VarChar(100)
-  hashedRT       String? @db.VarChar(100)
-  role           String  @default("STAFF") @db.VarChar(30)
-
-  isEmailVerified Boolean @default(false)
-  isLDAPUser      Boolean @default(true)
-  isDisabled      Boolean @default(false)
-
-  isDeleted    Boolean  @default(false)
-  userCreated  String?  @db.Char(36)
-  userModified String?  @db.Char(36)
-  dtCreated    DateTime @default(now())
-  dtModified   DateTime @updatedAt
-}
-
 model Product {
   id      String  @id @default(uuid()) @db.Char(36)
   refType Int     @default(0)
@@ -569,4 +544,69 @@ model Transaction {
 
   originSourceStorageTank    StorageTank? @relation("transactionOriginStorageTank", fields: [originSourceStorageTankId], references: [id])
   destinationSinkStorageTank StorageTank? @relation("transactionDestinationStorageTank", fields: [destinationSinkStorageTankId], references: [id])
+}
+
+model User {
+  id String @id @default(uuid()) @db.Char(36)
+
+  roleId String? @db.Char(36)
+
+  username       String  @unique @db.VarChar(30)
+  email          String  @unique @db.VarChar(50)
+  nik            String  @unique @db.VarChar(30)
+  name           String  @db.VarChar(50)
+  division       String  @db.VarChar(30)
+  position       String  @db.VarChar(30)
+  phone          String? @db.VarChar(30)
+  hashedPassword String  @db.VarChar(100)
+  hashedRT       String? @db.VarChar(100)
+
+  isEmailVerified Boolean @default(false)
+  isLDAPUser      Boolean @default(true)
+  isDisabled      Boolean @default(false)
+
+  isDeleted    Boolean  @default(false)
+  userCreated  String?  @db.Char(36)
+  userModified String?  @db.Char(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+
+  role Role? @relation(fields: [roleId], references: [id])
+}
+
+model Role {
+  id String @id @default(uuid()) @db.Char(36)
+
+  name String @unique @db.VarChar(30)
+
+  // Permission Permission?
+  dashboard          Int @default(0)
+  pksTransaction     Int @default(0)
+  t30Transaction     Int @default(0)
+  labananTransaction Int @default(0)
+  report             Int @default(0)
+  setting            Int @default(0)
+
+  userCreated  String   @db.Char(36)
+  userModified String   @db.Char(36)
+  dtCreated    DateTime @default(now())
+  dtModified   DateTime @updatedAt
+
+  User User[]
+}
+
+// belum dipakai, masih digabung dalam role
+model Permission {
+  id String @id @default(uuid()) @db.Char(36)
+
+  roleId String @unique @db.Char(36)
+
+  dashboard          Int @default(0)
+  pksTransaction     Int @default(0)
+  t30Transaction     Int @default(0)
+  labananTransaction Int @default(0)
+  report             Int @default(0)
+  setting            Int @default(0)
+
+  // role Role @relation(fields: [roleId], references: [id])
 }

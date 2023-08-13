@@ -5,7 +5,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AtGuard, RtGuard } from 'src/common/guards';
 import { SigninDto } from './dto';
-import { CreateUserDto } from 'src/users/dto';
+import { CreateUserDto } from 'src/user/dto';
 
 @ApiTags('Auth')
 @Controller('api/auth')
@@ -26,7 +26,8 @@ export class AuthController {
 
     try {
       console.log(req.user);
-      const user = await this.authService.getIAM(req.user['id']);
+      const userId = req.user['id'];
+      const user = await this.authService.getIAM(userId);
 
       const { username, email, name, division, position, phone } = user;
 
@@ -106,7 +107,8 @@ export class AuthController {
     };
 
     try {
-      const isSuccess = await this.authService.signout(req.user['sub'], res);
+      const userId = req.user['id'];
+      const isSuccess = await this.authService.signout(userId, res);
 
       if (isSuccess) {
         dataOut.message = 'Signed out successfully.';
@@ -137,7 +139,9 @@ export class AuthController {
     };
 
     try {
-      const tokens = await this.authService.refreshToken(req.user['sub'], req.user['refreshToken'], res);
+      const userId = req.user['id'];
+      const refreshToken = req.user['refreshToken'];
+      const tokens = await this.authService.refreshToken(userId, refreshToken, res);
 
       dataOut.data.tokens = tokens;
       dataOut.message = 'Token refreshed successfully.';

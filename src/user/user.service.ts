@@ -7,7 +7,7 @@ import { CreateUserDto, UpdateUserDto } from './dto';
 import { UserEntity } from './entities';
 
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(private db: DbService) {}
 
   async getIAM(id: string): Promise<UserEntity> {
@@ -85,7 +85,6 @@ export class UsersService {
           position: dto.position,
           phone: dto.phone,
           hashedPassword: hashedPassword,
-          role: dto.role,
           userCreated: userId,
           userModified: userId
         }

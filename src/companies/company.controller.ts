@@ -1,24 +1,15 @@
-import {
-  Body,
-  Get,
-  Param,
-  Post,
-  Controller,
-  Patch,
-  Delete,
-  Req,
-} from '@nestjs/common';
+import { Body, Get, Param, Post, Controller, Patch, Delete, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 
-import { CompaniesService } from './companies.service';
+import { CompanyService } from './company.service';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto';
 import { CompanyEntity } from './entities';
 
 @ApiTags('Companies')
 @Controller('api/companies')
-export class CompaniesController {
-  constructor(private companiesService: CompaniesService) {}
+export class CompanyController {
+  constructor(private companyService: CompanyService) {}
 
   @Get('')
   @ApiCreatedResponse({ type: CompanyEntity, isArray: true })
@@ -30,14 +21,14 @@ export class CompaniesController {
         company: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const records = await this.companiesService.getAll();
+      const records = await this.companyService.getAll();
 
       dataOut.data.company.records = records;
       dataOut.data.company.totalRecords = records.length;
@@ -48,7 +39,7 @@ export class CompaniesController {
     }
 
     return dataOut;
-    return this.companiesService.getAll();
+    return this.companyService.getAll();
   }
 
   @Get('deleted')
@@ -61,14 +52,14 @@ export class CompaniesController {
         company: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const records = await this.companiesService.getAllDeleted();
+      const records = await this.companyService.getAllDeleted();
 
       dataOut.data.company.records = records;
       dataOut.data.company.totalRecords = records.length;
@@ -88,13 +79,13 @@ export class CompaniesController {
       status: true,
       message: '',
       data: {
-        company: null,
+        company: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const record = await this.companiesService.getById(id);
+      const record = await this.companyService.getById(id);
 
       dataOut.data.company = record;
     } catch (error) {
@@ -113,21 +104,16 @@ export class CompaniesController {
       status: true,
       message: '',
       data: {
-        company: {
-          records: [],
-          totalRecords: 0,
-          page: 0,
-        },
+        company: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const record = await this.companiesService.searchFirst(query);
+      const record = await this.companyService.searchFirst(query);
 
       if (record) {
-        dataOut.data.company.records.push(record);
-        dataOut.data.company.totalRecords = 1;
+        dataOut.data.company = record;
       }
     } catch (error) {
       dataOut.status = false;
@@ -148,14 +134,14 @@ export class CompaniesController {
         company: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const records = await this.companiesService.searchMany(query);
+      const records = await this.companyService.searchMany(query);
 
       dataOut.data.company.records = records;
       dataOut.data.company.totalRecords = records.length;
@@ -175,21 +161,16 @@ export class CompaniesController {
       status: true,
       message: '',
       data: {
-        company: {
-          records: [],
-          totalRecords: 0,
-          page: 0,
-        },
+        company: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const record = await this.companiesService.searchFirstDeleted(query);
+      const record = await this.companyService.searchFirstDeleted(query);
 
       if (record) {
-        dataOut.data.company.records.push(record);
-        dataOut.data.company.totalRecords = 1;
+        dataOut.data.company = record;
       }
     } catch (error) {
       dataOut.status = false;
@@ -210,14 +191,14 @@ export class CompaniesController {
         company: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const records = await this.companiesService.searchManyDeleted(query);
+      const records = await this.companyService.searchManyDeleted(query);
 
       dataOut.data.company.records = records;
       dataOut.data.company.totalRecords = records.length;
@@ -237,14 +218,14 @@ export class CompaniesController {
       status: true,
       message: '',
       data: {
-        company: null,
+        company: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
       const userId = ''; //req.user['id'];
-      const record = await this.companiesService.create(dto, userId);
+      const record = await this.companyService.create(dto, userId);
 
       dataOut.data.company = record;
     } catch (error) {
@@ -258,23 +239,19 @@ export class CompaniesController {
 
   @Patch(':id')
   @ApiCreatedResponse({ type: CompanyEntity })
-  async updateById(
-    @Param('id') id: string,
-    @Body() dto: UpdateCompanyDto,
-    @Req() req: Request,
-  ) {
+  async updateById(@Param('id') id: string, @Body() dto: UpdateCompanyDto, @Req() req: Request) {
     const dataOut = {
       status: true,
       message: '',
       data: {
-        company: null,
+        company: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
       const userId = ''; //req.user['id'];
-      const record = await this.companiesService.updateById(id, dto, userId);
+      const record = await this.companyService.updateById(id, dto, userId);
 
       dataOut.data.company = record;
     } catch (error) {
@@ -293,14 +270,14 @@ export class CompaniesController {
       status: true,
       message: '',
       data: {
-        company: null,
+        company: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
       const userId = ''; //req.user['id'];
-      const record = await this.companiesService.deleteById(id, userId);
+      const record = await this.companyService.deleteById(id, userId);
 
       dataOut.data.company = record;
     } catch (error) {

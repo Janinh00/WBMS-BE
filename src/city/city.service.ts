@@ -5,12 +5,12 @@ import { CreateCityDto, UpdateCityDto } from './dto';
 import { CityEntity } from './entities';
 
 @Injectable()
-export class CitiesService {
+export class CityService {
   constructor(private db: DbService) {}
 
   async getAll(): Promise<CityEntity[]> {
     const records = await this.db.city.findMany({
-      where: { isDeleted: false },
+      where: { isDeleted: false }
     });
 
     return records;
@@ -18,7 +18,7 @@ export class CitiesService {
 
   async getAllDeleted(): Promise<CityEntity[]> {
     const records = await this.db.city.findMany({
-      where: { isDeleted: true },
+      where: { isDeleted: true }
     });
 
     return records;
@@ -26,7 +26,7 @@ export class CitiesService {
 
   async getById(id: string): Promise<CityEntity> {
     const record = await this.db.city.findUnique({
-      where: { id },
+      where: { id }
     });
 
     return record;
@@ -69,8 +69,8 @@ export class CitiesService {
       data: {
         ...dto,
         userCreated: userId,
-        userModified: userId,
-      },
+        userModified: userId
+      }
     };
 
     const record = await this.db.city.create(params);
@@ -78,14 +78,10 @@ export class CitiesService {
     return record;
   }
 
-  async updateById(
-    id: string,
-    dto: UpdateCityDto,
-    userId: string,
-  ): Promise<CityEntity> {
+  async updateById(id: string, dto: UpdateCityDto, userId: string): Promise<CityEntity> {
     const params = {
       where: { id },
-      data: { ...dto, userModified: userId },
+      data: { ...dto, userModified: userId }
     };
 
     const record = await this.db.city.update(params);
@@ -96,7 +92,7 @@ export class CitiesService {
   async deleteById(id: string, userId: string): Promise<CityEntity> {
     const params = {
       where: { id },
-      data: { isDeleted: true, userModified: userId },
+      data: { isDeleted: true, userModified: userId }
     };
 
     const record = await this.db.city.update(params);

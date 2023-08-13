@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 // import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
+import * as fs from 'fs';
 
 import { AppModule } from './app.module';
 import { DbService } from './db/db.service';
@@ -10,7 +11,9 @@ import { ENV } from './utils/constants';
 import SwaggerDocumentation from './settings/swagger.config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    // httpsOptions: { key: fs.readFileSync(ENV.SSL_KEY_FILE), cert: fs.readFileSync(ENV.SSL_CRT_FILE) }
+  });
 
   printEnvVar();
 

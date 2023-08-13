@@ -5,7 +5,7 @@ import { CreateProvinceDto, UpdateProvinceDto } from './dto';
 import { ProvinceEntity } from './entities';
 
 @Injectable()
-export class ProvincesService {
+export class ProvinceService {
   constructor(private db: DbService) {}
 
   async getAll(): Promise<ProvinceEntity[]> {

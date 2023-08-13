@@ -1,24 +1,15 @@
-import {
-  Body,
-  Get,
-  Param,
-  Post,
-  Controller,
-  Patch,
-  Delete,
-  Req,
-} from '@nestjs/common';
+import { Body, Get, Param, Post, Controller, Patch, Delete, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 
-import { CitiesService } from './cities.service';
+import { CityService } from './city.service';
 import { CreateCityDto, UpdateCityDto } from './dto';
 import { CityEntity } from './entities';
 
 @ApiTags('Cities')
 @Controller('api/cities')
-export class CitiesController {
-  constructor(private citiesService: CitiesService) {}
+export class CityController {
+  constructor(private cityService: CityService) {}
 
   @Get('')
   @ApiCreatedResponse({ type: CityEntity, isArray: true })
@@ -30,14 +21,14 @@ export class CitiesController {
         city: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const records = await this.citiesService.getAll();
+      const records = await this.cityService.getAll();
 
       dataOut.data.city.records = records;
       dataOut.data.city.totalRecords = records.length;
@@ -62,14 +53,14 @@ export class CitiesController {
         city: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const records = await this.citiesService.getAllDeleted();
+      const records = await this.cityService.getAllDeleted();
 
       dataOut.data.city.records = records;
       dataOut.data.city.totalRecords = records.length;
@@ -89,13 +80,13 @@ export class CitiesController {
       status: true,
       message: '',
       data: {
-        city: null,
+        city: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const record = await this.citiesService.getById(id);
+      const record = await this.cityService.getById(id);
 
       dataOut.data.city = record;
     } catch (error) {
@@ -114,21 +105,16 @@ export class CitiesController {
       status: true,
       message: '',
       data: {
-        city: {
-          records: [],
-          totalRecords: 0,
-          page: 0,
-        },
+        city: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const record = await this.citiesService.searchFirst(query);
+      const record = await this.cityService.searchFirst(query);
 
       if (record) {
-        dataOut.data.city.records.push(record);
-        dataOut.data.city.totalRecords = 1;
+        dataOut.data.city = record;
       }
     } catch (error) {
       dataOut.status = false;
@@ -149,14 +135,14 @@ export class CitiesController {
         city: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const records = await this.citiesService.searchMany(query);
+      const records = await this.cityService.searchMany(query);
 
       dataOut.data.city.records = records;
       dataOut.data.city.totalRecords = records.length;
@@ -176,21 +162,16 @@ export class CitiesController {
       status: true,
       message: '',
       data: {
-        city: {
-          records: [],
-          totalRecords: 0,
-          page: 0,
-        },
+        city: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const record = await this.citiesService.searchFirstDeleted(query);
+      const record = await this.cityService.searchFirstDeleted(query);
 
       if (record) {
-        dataOut.data.city.records.push(record);
-        dataOut.data.city.totalRecords = 1;
+        dataOut.data.city = record;
       }
     } catch (error) {
       dataOut.status = false;
@@ -211,14 +192,14 @@ export class CitiesController {
         city: {
           records: [],
           totalRecords: 0,
-          page: 0,
-        },
+          page: 0
+        }
       },
-      logs: {},
+      logs: {}
     };
 
     try {
-      const records = await this.citiesService.searchManyDeleted(query);
+      const records = await this.cityService.searchManyDeleted(query);
 
       dataOut.data.city.records = records;
       dataOut.data.city.totalRecords = records.length;
@@ -238,14 +219,14 @@ export class CitiesController {
       status: true,
       message: '',
       data: {
-        city: null,
+        city: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
       const userId = ''; //req.user['id'];
-      const record = await this.citiesService.create(dto, userId);
+      const record = await this.cityService.create(dto, userId);
 
       dataOut.data.city = record;
     } catch (error) {
@@ -259,23 +240,19 @@ export class CitiesController {
 
   @Patch(':id')
   @ApiCreatedResponse({ type: CityEntity })
-  async updateById(
-    @Param('id') id: string,
-    @Body() dto: UpdateCityDto,
-    @Req() req: Request,
-  ) {
+  async updateById(@Param('id') id: string, @Body() dto: UpdateCityDto, @Req() req: Request) {
     const dataOut = {
       status: true,
       message: '',
       data: {
-        city: null,
+        city: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
       const userId = ''; //req.user['id'];
-      const record = await this.citiesService.updateById(id, dto, userId);
+      const record = await this.cityService.updateById(id, dto, userId);
 
       dataOut.data.city = record;
     } catch (error) {
@@ -294,14 +271,14 @@ export class CitiesController {
       status: true,
       message: '',
       data: {
-        city: null,
+        city: null
       },
-      logs: {},
+      logs: {}
     };
 
     try {
       const userId = ''; //req.user['id'];
-      const record = await this.citiesService.deleteById(id, userId);
+      const record = await this.cityService.deleteById(id, userId);
 
       dataOut.data.city = record;
     } catch (error) {

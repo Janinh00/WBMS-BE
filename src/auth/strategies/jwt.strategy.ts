@@ -16,6 +16,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: { sub: string; username: string }) {
+    // ini seharusnya diawal aja, ditaro di payload,
+    // karena kl seperti ini costnya tinggi setiap panggil api akan call db process
     // console.log(payload);
     const user = await this.db.user.findUnique({
       where: { id: payload.sub },

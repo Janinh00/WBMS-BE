@@ -6,9 +6,9 @@ import { hash, verify } from 'argon2';
 import { DbService } from 'src/db/db.service';
 import { SigninDto } from './dto';
 import { Tokens } from './types';
-import { UsersService } from 'src/users/users.service';
-import { CreateUserDto } from 'src/users/dto';
-import { UserEntity } from 'src/users/entities/user.entity';
+import { UserService } from 'src/user/user.service';
+import { CreateUserDto } from 'src/user/dto';
+import { UserEntity } from 'src/user/entities/user.entity';
 import { Response } from 'express';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class AuthService {
     private db: DbService,
     private jwt: JwtService,
     private config: ConfigService,
-    private usersService: UsersService
+    private usersService: UserService
   ) {}
 
   async signup(dto: CreateUserDto): Promise<UserEntity> {
@@ -75,8 +75,8 @@ export class AuthService {
     return { tokens, user };
   }
 
-  async getIAM(id: string): Promise<UserEntity> {
-    const user = await this.usersService.getIAM(id);
+  async getIAM(userId: string): Promise<UserEntity> {
+    const user = await this.usersService.getIAM(userId);
 
     return user;
   }
@@ -94,8 +94,8 @@ export class AuthService {
       }
     });
 
-    res.clearCookie('at');
-    res.clearCookie('rt');
+    res.clearCookie('at', { httpOnly: true, sameSite: 'lax' });
+    res.clearCookie('rt', { httpOnly: true, sameSite: 'lax' });
 
     return updatedCount.count > 0 ? true : false;
   }
