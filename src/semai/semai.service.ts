@@ -20,432 +20,157 @@ export class SemaiService {
   WBMS_SEMAI_CERT = this.config.get('WBMS_SEMAI_CERT');
   WBMS_SEMAI_KEY = this.config.get('WBMS_SEMAI_KEY');
 
-  httpsAgent = new https.Agent({
-    cert: fs.readFileSync(this.WBMS_SEMAI_CERT),
-    key: fs.readFileSync(this.WBMS_SEMAI_KEY)
-  });
+  // const httpsAgent = new https.Agent({
+  //   cert: fs.readFileSync(this.WBMS_SEMAI_CERT),
+  //   key: fs.readFileSync(this.WBMS_SEMAI_KEY)
+  // });
 
-  // httpsAgent: this.httpsAgent,
+  // const httpsAgent = new https.Agent({ rejectUnauthorized: false });
+
   api = axios.create({
     baseURL: `${this.WBMS_SEMAI_API_URL}/`,
-    httpsAgent: this.httpsAgent,
+    httpsAgent: new https.Agent({ rejectUnauthorized: false }),
+    // httpsAgent: this.httpsAgent,
     headers: {
       'x-api-key': this.WBMS_SEMAI_API_KEY
     }
   });
 
-  create(createSemaiDto: DecodeQrcodeDto) {
-    return 'This action adds a new semai';
-  }
-
-  findAll() {
-    return `This action returns all semai`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} semai`;
-  }
-
-  update(id: number, updateSemaiDto: UpdateSemaiDto) {
-    return `This action updates a #${id} semai`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} semai`;
-  }
-
   async products() {
-    const dataOut = {
-      status: true,
-      message: '',
-      data: {
-        products: []
-      },
-      logs: {}
-    };
+    const response = await this.api.get(`products?pageSize=0`).then((res) => res?.data);
 
-    try {
-      const response = await this.api.get(`products?pageSize=0`).then((res) => res?.data);
+    if (!response.success) throw new Error(response?.message);
 
-      if (!response.success) throw new Error(response?.message);
-
-      dataOut.data.products = response.record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return response;
   }
 
   async sites() {
-    const dataOut = {
-      status: true,
-      message: '',
-      data: {
-        sites: []
-      },
-      logs: {}
-    };
+    const response = await this.api.get(`sites?pageSize=0`).then((res) => res?.data);
 
-    try {
-      const response = await this.api.get(`sites?pageSize=0`).then((res) => res?.data);
-      console.log('response:');
-      console.log(response);
+    if (!response.success) throw new Error(response?.message);
 
-      if (!response.success) throw new Error(response?.message);
-
-      dataOut.data.sites = response.records;
-    } catch (error) {
-      console.log('error');
-      console.log(error);
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return response;
   }
 
   async storageTanks() {
-    const dataOut = {
-      status: true,
-      message: '',
-      data: {
-        storageTanks: []
-      },
-      logs: {}
-    };
+    const response = await this.api.get(`storage-tanks?pageSize=0`).then((res) => res?.data);
 
-    try {
-      const response = await this.api.get(`storage-tanks?pageSize=0`).then((res) => res?.data);
+    if (!response.success) throw new Error(response?.message);
 
-      if (!response.success) throw new Error(response?.message);
-
-      dataOut.data.storageTanks = response.record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return response;
   }
 
   async transportVehicles() {
-    const dataOut = {
-      status: true,
-      message: '',
-      data: {
-        transportVehicles: []
-      },
-      logs: {}
-    };
+    const response = await this.api.get(`transport-vehicles?pageSize=0`).then((res) => res?.data);
 
-    try {
-      const response = await this.api.get(`transport-vehicles?pageSize=0`).then((res) => res?.data);
+    if (!response.success) throw new Error(response?.message);
 
-      if (!response.success) throw new Error(response?.message);
-
-      dataOut.data.transportVehicles = response.record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return response;
   }
 
   async transporters() {
-    const dataOut = {
-      status: true,
-      message: '',
-      data: {
-        transporters: []
-      },
-      logs: {}
-    };
+    const response = await this.api.get(`transporters?pageSize=0`).then((res) => res?.data);
 
-    try {
-      const response = await this.api.get(`transporters?pageSize=0`).then((res) => res?.data);
+    if (!response.success) throw new Error(response?.message);
 
-      if (!response.success) throw new Error(response?.message);
-
-      dataOut.data.transporters = response.record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return response;
   }
 
   async vehicleOperators() {
-    const dataOut = {
-      status: true,
-      message: '',
-      data: {
-        vehicleOperators: []
-      },
-      logs: {}
-    };
+    const response = await this.api.get(`vehicle-operators?pageSize=0`).then((res) => res?.data);
 
-    try {
-      const response = await this.api.get(`vehicle-operators?pageSize=0`).then((res) => res?.data);
+    if (!response.success) throw new Error(response?.message);
 
-      if (!response.success) throw new Error(response?.message);
-
-      dataOut.data.vehicleOperators = response.record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return response;
   }
 
   async decodeQrcode(dto: DecodeQrcodeDto) {
-    const dataOut = {
-      status: true,
-      message: '',
-      data: {
-        decodedQrcode: {}
-      },
-      logs: {}
-    };
+    const response = await this.api.post(`cmd/decode-qrcode`, dto).then((res) => res?.data);
 
-    try {
-      const response = await this.api.post(`cmd/decode-qrcode`, dto).then((res) => res?.data);
+    if (!response.success) throw new Error(response?.message);
 
-      if (!response.success) throw new Error(response?.message);
-
-      dataOut.data.decodedQrcode = response.record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return response;
   }
 
   async encodeQrcode(dto: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      data: {
-        qrcode: {}
-      },
-      logs: {}
-    };
+    const { orderId, functionCode } = dto;
 
-    try {
-      const orderId = dto.orderId;
-      const functionCode = dto.functionCode;
+    const response = await this.api.get(`cmd/encode-qrcode/${orderId}/${functionCode}`).then((res) => res?.data);
 
-      console.log(dto);
+    if (!response.success) throw new Error(response?.message);
 
-      const response = await this.api.get(`cmd/encode-qrcode/${orderId}/${functionCode}`).then((res) => res?.data);
+    return response;
+  }
 
-      if (!response.success) throw new Error(response?.message);
+  async initiateDelivery(dto: any) {
+    const response = await this.api.post(`cmd/initiate-delivery`, dto).then((res) => res?.data);
 
-      dataOut.data.qrcode = response.record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
+    if (!response.success) throw new Error(response?.message);
 
-    return dataOut;
+    return response;
   }
 
   async dispatchDelivery(dto: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      data: {
-        transaction: {}
-      },
-      logs: {}
-    };
+    const response = await this.api.post(`cmd/dispatch-delivery`, dto).then((res) => res?.data);
 
-    try {
-      console.log(dto);
+    if (!response.success) throw new Error(response?.message);
 
-      const response = await this.api.post(`cmd/dispatch-delivery`, dto).then((res) => res?.data);
-
-      if (!response.success) throw new Error(response?.message);
-
-      dataOut.data.transaction = response.record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return response;
   }
 
   async rejectDelivery(dto: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      data: {
-        transaction: {}
-      },
-      logs: {}
-    };
+    const response = await this.api.post(`cmd/reject-delivery`, dto).then((res) => res?.data);
 
-    try {
-      const response = await this.api.post(`cmd/reject-delivery`, dto).then((res) => res?.data);
+    if (!response.success) throw new Error(response?.message);
 
-      if (!response.success) throw new Error(response?.message);
-
-      dataOut.data.transaction = response.record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return response;
   }
 
   async closeDeliveryCanceled(dto: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      data: {
-        transaction: {}
-      },
-      logs: {}
-    };
+    const response = await this.api.post(`cmd/close-delivery-as-canceled`, dto).then((res) => res?.data);
 
-    try {
-      const response = await this.api.post(`cmd/close-delivery-as-canceled`, dto).then((res) => res?.data);
+    if (!response.success) throw new Error(response?.message);
 
-      if (!response.success) throw new Error(response?.message);
-
-      dataOut.data.transaction = response.record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return response;
   }
 
   async closeDeliveryAccepted(dto: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      data: {
-        transaction: {}
-      },
-      logs: {}
-    };
+    const response = await this.api.post(`cmd/close-delivery-as-accepted`, dto).then((res) => res?.data);
 
-    try {
-      const response = await this.api.post(`cmd/close-delivery-as-accepted`, dto).then((res) => res?.data);
+    if (!response.success) throw new Error(response?.message);
 
-      if (!response.success) throw new Error(response?.message);
-
-      dataOut.data.transaction = response.record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return response;
   }
 
   async closeDeliveryRejected(dto: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      data: {
-        transaction: {}
-      },
-      logs: {}
-    };
+    const response = await this.api.post(`cmd/close-delivery-as-rejected`, dto).then((res) => res?.data);
 
-    try {
-      console.log('data in');
-      console.log(dto);
+    if (!response.success) throw new Error(response?.message);
 
-      const response = await this.api.post(`cmd/close-delivery-as-rejected`, dto).then((res) => res?.data);
-
-      console.log('hasil api close-delivery-as-rejected');
-      console.log(response);
-
-      if (!response.success) {
-        dataOut.logs = { ...dataOut.logs, response };
-        throw new Error(response?.message);
-      }
-
-      dataOut.data.transaction = response.record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { ...dataOut.logs, error };
-    }
-
-    return dataOut;
+    return response;
   }
 
   async validateDispatchDelivery(dto: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      data: {
-        transaction: {}
-      },
-      logs: {}
-    };
+    const response = await this.api.post(`cmd/validate-dispatch-delivery`, dto).then((res) => res?.data);
 
-    try {
-      const response = await this.api.post(`cmd/validate-dispatch-delivery`, dto).then((res) => res?.data);
+    if (!response.success) throw new Error(response?.message);
 
-      if (!response.success) throw new Error(response?.message);
+    return response;
+  }
 
-      dataOut.data.transaction = response.record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
+  async initiateUnloading(dto: any) {
+    const response = await this.api.post(`cmd/initiate-unloading`, dto).then((res) => res?.data);
 
-    return dataOut;
+    if (!response.success) throw new Error(response?.message);
+
+    return response;
   }
 
   async validateUnloading(dto: any) {
-    const dataOut = {
-      status: true,
-      message: '',
-      data: {
-        transaction: {}
-      },
-      logs: {}
-    };
+    const response = await this.api.post(`cmd/validate-unloading`, dto).then((res) => res?.data);
 
-    try {
-      const response = await this.api.post(`cmd/validate-unloading`, dto).then((res) => res?.data);
+    if (!response.success) throw new Error(response?.message);
 
-      if (!response.success) throw new Error(response?.message);
-
-      dataOut.data.transaction = response.record;
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { error };
-    }
-
-    return dataOut;
+    return response;
   }
 }

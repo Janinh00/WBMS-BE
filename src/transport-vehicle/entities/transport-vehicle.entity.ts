@@ -1,32 +1,34 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { TransportVehicle } from '@prisma/client';
 
 export class TransportVehicleEntity implements TransportVehicle {
-  @ApiProperty() id: string;
+  @ApiPropertyOptional() id: string;
 
-  @ApiProperty() refType: number;
-  @ApiProperty() refId: string;
+  @ApiPropertyOptional() refType: number;
+  @ApiPropertyOptional() refId: string;
 
-  @ApiProperty() companyId: string;
-  @ApiProperty() companyRefId: string;
+  @ApiPropertyOptional() companyId: string;
+  @ApiPropertyOptional() companyRefId: string;
   @ApiProperty() companyName: string;
 
-  @ApiProperty() productId: string;
-  @ApiProperty() productRefId: string;
+  @ApiPropertyOptional() productId: string;
+  @ApiPropertyOptional() productRefId: string;
   @ApiProperty() productName: string;
-  @ApiProperty() productCode: string;
 
+  @ApiProperty() code: string;
+  @ApiPropertyOptional() codeSap: string;
   @ApiProperty() plateNo: string;
-  @ApiProperty() capacity: number;
-  @ApiProperty() brand: string;
-  @ApiProperty() model: string;
+  @ApiPropertyOptional() description: string;
+  @ApiPropertyOptional() capacity: number;
+  @ApiPropertyOptional() brand: string;
+  @ApiPropertyOptional() model: string;
   @ApiProperty() sccModel: number;
-  @ApiProperty() notes: string;
+  @ApiPropertyOptional() notes: string;
 
-  @ApiProperty() licenseED: Date;
-  @ApiProperty() keurED: Date;
+  @ApiPropertyOptional() licenseED: Date;
+  @ApiPropertyOptional() keurED: Date;
 
-  @ApiProperty() isDeleted: boolean;
+  @ApiPropertyOptional() isDeleted: boolean;
 
   userCreated: string;
   userModified: string;

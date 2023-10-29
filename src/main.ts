@@ -15,10 +15,10 @@ async function bootstrap() {
     // httpsOptions: { key: fs.readFileSync(ENV.SSL_KEY_FILE), cert: fs.readFileSync(ENV.SSL_CRT_FILE) }
   });
 
-  printEnvVar();
+  // printEnvVar();
 
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://192.168.1.122:3000'],
+    origin: ['http://localhost:8000'],
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     credentials: true
   });

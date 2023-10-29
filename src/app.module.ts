@@ -1,24 +1,31 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { AuthModule } from './auth/auth.module';
 import { DbModule } from './db/db.module';
-import { TransactionModule } from './transactions/transactions.module';
-import { SitesModule } from './sites/sites.module';
-import { CompanyModule } from './companies/company.module';
+
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
+
+import { ProvinceModule } from './province/province.module';
 import { CityModule } from './city/city.module';
-import { CustomerTypesModule } from './customerTypes/customerTypes.module';
-import { CustomerGroupsModule } from './customerGroups/customerGroups.module';
-import { BarcodeTypesModule } from './barcodeTypes/barcodeTypes.module';
-import { CustomersModule } from './customers/customers.module';
-import { MillsModule } from './mills/mills.module';
-import { WeighbridgesModule } from './weighbridges/weighbridges.module';
-import { ConfigsModule } from './configs/configs.module';
-import { UsersModule } from './user/user.module';
-import { ProductsModule } from './products/products.module';
-import { StorageTanksModule } from './storageTanks/storageTanks.module';
-import { ProductGroupsModule } from './productGroups/productGroups.module';
-import { ProvinceModule } from './provinces/province.module';
+import { CompanyModule } from './company/company.module';
+import { CustomerModule } from './customer/customer.module';
+import { CustomerGroupModule } from './customer-group/customerGroups.module';
+import { CustomerTypeModule } from './customer-type/customer-type.module';
+import { BarcodeTypeModule } from './barcode-type/barcode-type.module';
+import { SiteModule } from './site/site.module';
+// === sampai sini
+
+import { TransactionModule } from './transaction/transactions.module';
+
+import { MillsModule } from './mill/mills.module';
+import { WeighbridgesModule } from './weighbridge/weighbridges.module';
+import { ConfigsModule } from './config/configs.module';
+
+import { ProductsModule } from './product/products.module';
+import { StorageTanksModule } from './storage-tank/storageTanks.module';
+import { ProductGroupsModule } from './product-group/productGroups.module';
+
 import { SemaiModule } from './semai/semai.module';
 import { DriverModule } from './driver/driver.module';
 import { TransportVehicleModule } from './transport-vehicle/transport-vehicle.module';
@@ -30,17 +37,17 @@ import { RoleModule } from './role/role.module';
     DbModule,
     AuthModule,
     TransactionModule,
-    SitesModule,
+    SiteModule,
     CompanyModule,
     CityModule,
-    CustomerTypesModule,
-    CustomerGroupsModule,
-    BarcodeTypesModule,
-    CustomersModule,
+    CustomerTypeModule,
+    CustomerGroupModule,
+    BarcodeTypeModule,
+    CustomerModule,
     MillsModule,
     WeighbridgesModule,
     ConfigsModule,
-    UsersModule,
+    UserModule,
     ProductsModule,
     StorageTanksModule,
     ProductGroupsModule,

@@ -5,9 +5,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// relationMode = "prisma" agar pada saat mirroring backup tidak ada masalah
 datasource db {
-  provider = "mysql"
-  url      = env("WBMS_DB_URL")
+  provider     = "mysql"
+  url          = env("WBMS_DB_URL")
+  relationMode = "prisma"
 }
 
 model Province {
@@ -40,6 +42,8 @@ model City {
 
   sites     Site[]
   customers Customer[]
+
+  @@index([provinceId])
 }
 
 model Company {
@@ -196,7 +200,7 @@ model Site {
   dtCreated    DateTime @default(now())
   dtModified   DateTime @updatedAt
 
-  sourceSite Site?    @relation("source_of_this_site", fields: [sourceSiteId], references: [id])
+  sourceSite Site?    @relation("sourceSite", fields: [sourceSiteId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   company    Company? @relation(fields: [companyId], references: [id])
   city       City?    @relation(fields: [cityId], references: [id])
 
@@ -205,10 +209,14 @@ model Site {
   mills        Mill[]
   config       Config[]
 
-  destinationSites Site[] @relation("source_of_this_site")
+  destinationSites Site[] @relation("sourceSite")
 
   originSiteTransactions      Transaction[] @relation("transactionOriginSite")
   destinationSiteTransactions Transaction[] @relation("transactionDestinationSite")
+
+  @@index([sourceSiteId])
+  @@index([companyId])
+  @@index([cityId])
 }
 
 model Mill {
@@ -271,10 +279,11 @@ model Product {
   refType Int     @default(0)
   refId   String? @db.VarChar(50)
 
-  productGroupName String?
+  productGroupName String? @db.VarChar(50)
 
   code          String  @db.VarChar(50)
   codeSap       String? @db.VarChar(50)
+  codeBatch     String? @db.VarChar(50)
   name          String  @db.VarChar(50)
   shortName     String? @db.VarChar(50)
   description   String? @db.VarChar(500)
@@ -323,6 +332,7 @@ model StorageTank {
   productName  String? @db.VarChar(50)
 
   code        String  @db.VarChar(50)
+  codeSap     String? @db.VarChar(50)
   name        String  @db.VarChar(50)
   shortName   String? @db.VarChar(50)
   description String? @db.VarChar(500)
@@ -383,14 +393,16 @@ model TransportVehicle {
   productId    String? @db.Char(36)
   productRefId String? @db.VarChar(50)
   productName  String  @db.VarChar(50)
-  productCode  String  @db.VarChar(50)
 
-  plateNo  String  @db.VarChar(10)
-  capacity Float?
-  brand    String? @db.VarChar(30)
-  model    String? @db.VarChar(30)
-  sccModel Int     @default(0)
-  notes    String? @db.VarChar(1000)
+  code        String  @db.VarChar(50)
+  codeSap     String? @db.VarChar(50)
+  plateNo     String  @db.VarChar(10)
+  description String? @db.VarChar(500)
+  capacity    Float?
+  brand       String? @db.VarChar(30)
+  model       String? @db.VarChar(30)
+  sccModel    Int     @default(0)
+  notes       String? @db.VarChar(1000)
 
   licenseED DateTime?
   keurED    DateTime?
@@ -406,8 +418,9 @@ model TransportVehicle {
 }
 
 model Transaction {
-  id    String @id @default(uuid()) @db.Char(36)
-  tType Int    @default(1)
+  id              String @id @default(uuid()) @db.Char(36)
+  typeSite        Int    @default(1)
+  typeTransaction Int    @default(1)
 
   bonTripNo      String? @db.Char(16)
   vehicleStatus  Int     @default(0)
@@ -422,14 +435,21 @@ model Transaction {
   productCode String? @db.VarChar(30)
   productName String? @db.VarChar(50)
 
-  rspoSccModel     Int     @default(0)
-  rspoUniqueNumber String? @db.VarChar(50)
-  isccSccModel     Int     @default(0)
-  isccUniqueNumber String? @db.VarChar(50)
-  isccGhgValue     Float   @default(0)
-  isccEeeValue     Float   @default(0)
+  rspoCertificateNumber String? @db.VarChar(50)
+  rspoSccModel          Int     @default(0)
+  rspoUniqueNumber      String? @db.VarChar(50)
 
-  transporterId               String? @db.Char(36)
+  isccCertificateNumber String? @db.VarChar(50)
+  isccSccModel          Int     @default(0)
+  isccUniqueNumber      String? @db.VarChar(50)
+  isccGhgValue          Float   @default(0)
+  isccEeeValue          Float   @default(0)
+
+  ispoCertificateNumber String? @db.VarChar(50)
+  ispoSccModel          Int     @default(0)
+  ispoUniqueNumber      String? @db.VarChar(50)
+
+  transporterCompanyId        String? @db.Char(36)
   transporterCompanyCode      String? @db.VarChar(30)
   transporterCompanyName      String? @db.VarChar(50)
   transporterCompanyShortName String? @db.VarChar(30)
@@ -536,7 +556,7 @@ model Transaction {
   dtModified   DateTime @updatedAt
 
   product     Product? @relation(fields: [productId], references: [id])
-  transporter Company? @relation(fields: [transporterId], references: [id])
+  transporter Company? @relation(fields: [transporterCompanyId], references: [id])
   driver      Driver?  @relation(fields: [driverId], references: [id])
 
   originSite      Site? @relation(fields: [originSiteId], references: [id], name: "transactionOriginSite")
@@ -549,15 +569,15 @@ model Transaction {
 model User {
   id String @id @default(uuid()) @db.Char(36)
 
-  roleId String? @db.Char(36)
+  username String  @unique @db.VarChar(30)
+  email    String  @unique @db.VarChar(50)
+  nik      String  @unique @db.VarChar(30)
+  name     String  @db.VarChar(50)
+  division String  @db.VarChar(30)
+  position String  @db.VarChar(30)
+  phone    String? @db.VarChar(30)
+  role     Int?    @default(0)
 
-  username       String  @unique @db.VarChar(30)
-  email          String  @unique @db.VarChar(50)
-  nik            String  @unique @db.VarChar(30)
-  name           String  @db.VarChar(50)
-  division       String  @db.VarChar(30)
-  position       String  @db.VarChar(30)
-  phone          String? @db.VarChar(30)
   hashedPassword String  @db.VarChar(100)
   hashedRT       String? @db.VarChar(100)
 
@@ -570,8 +590,6 @@ model User {
   userModified String?  @db.Char(36)
   dtCreated    DateTime @default(now())
   dtModified   DateTime @updatedAt
-
-  role Role? @relation(fields: [roleId], references: [id])
 }
 
 model Role {
@@ -591,8 +609,6 @@ model Role {
   userModified String   @db.Char(36)
   dtCreated    DateTime @default(now())
   dtModified   DateTime @updatedAt
-
-  User User[]
 }
 
 // belum dipakai, masih digabung dalam role

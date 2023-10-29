@@ -260,7 +260,6 @@ export class DriverController {
 
     try {
       const userId = ''; //req.user['id'];
-      console.log(id);
       const record = await this.driverService.updateById(id, dto, userId);
 
       dataOut.data.driver = record;

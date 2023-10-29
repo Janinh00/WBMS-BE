@@ -1,21 +1,37 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { SemaiService } from './semai.service';
 import { DecodeQrcodeDto, UpdateSemaiDto } from './dto';
 
-@ApiTags('Semai')
-@Controller('api/semai')
+@ApiTags('eDispatch')
+@Controller('api/edispatch')
 export class SemaiController {
   constructor(private readonly semaiService: SemaiService) {}
+  @Post('encode-qrcode')
+  async encodeQrcode(@Body() body: any) {
+    let dataOut = {
+      status: true,
+      message: '',
+      data: {
+        qrcode: ''
+      },
+      logs: {}
+    };
+
+    try {
+      const response = await this.semaiService.encodeQrcode(body);
+
+      dataOut.data.qrcode = response.record;
+    } catch (error) {
+      dataOut.status = false;
+      dataOut.message = error.message;
+      dataOut.logs = { ...dataOut.logs, error };
+    }
+
+    return dataOut;
+  }
+
   @Get('products')
   products() {
     return this.semaiService.products();
@@ -42,52 +58,32 @@ export class SemaiController {
   }
 
   @Get('vehicle-operators')
-  vehicleOperators() {
-    return this.semaiService.vehicleOperators();
-  }
+  async vehicleOperators() {
+    const dataOut = {
+      status: true,
+      message: '',
+      data: {
+        vehicleOperator: {
+          records: [],
+          totalRecords: 0,
+          page: 0
+        }
+      },
+      logs: {}
+    };
 
-  @Post('decode-qrcode')
-  decodeQrcode(@Body() dto: DecodeQrcodeDto) {
-    return this.semaiService.decodeQrcode(dto);
-  }
+    try {
+      const response = await this.semaiService.vehicleOperators();
 
-  @Post('dispatch-delivery')
-  dispatchDelivery(@Body() dto: any) {
-    return this.semaiService.dispatchDelivery(dto);
-  }
+      dataOut.data.vehicleOperator.records = response.records;
+      dataOut.data.vehicleOperator.totalRecords = response.totalRecords;
+      dataOut.data.vehicleOperator.page = response.records;
+    } catch (error) {
+      dataOut.status = false;
+      dataOut.message = error.message;
+      dataOut.logs = { error };
+    }
 
-  @Post('reject-delivery')
-  rejectDelivery(@Body() dto: any) {
-    return this.semaiService.rejectDelivery(dto);
-  }
-
-  @Post('close-delivery-as-accepted')
-  closeDeliveryAccepted(@Body() dto: any) {
-    return this.semaiService.closeDeliveryCanceled(dto);
-  }
-
-  @Post('close-delivery-as-canceled')
-  closeDeliveryCanceled(@Body() dto: any) {
-    return this.semaiService.closeDeliveryCanceled(dto);
-  }
-
-  @Post('close-delivery-as-rejected')
-  closeDeliveryRejected(@Body() dto: any) {
-    return this.semaiService.closeDeliveryRejected(dto);
-  }
-
-  @Post('validate-dispatch-delivery')
-  validateDispatchDelivery(@Body() dto: any) {
-    return this.semaiService.validateDispatchDelivery(dto);
-  }
-
-  @Post('validate-unloading')
-  validateUnloading(@Body() dto: any) {
-    return this.semaiService.validateUnloading(dto);
-  }
-
-  @Post('encode-qrcode')
-  encodeQrcode(@Body() dto: any) {
-    return this.semaiService.encodeQrcode(dto);
+    return dataOut;
   }
 }

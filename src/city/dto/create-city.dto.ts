@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsString, IsUUID } from 'class-validator';
 
 export class CreateCityDto {
-  @ApiProperty() @IsUUID() @IsNotEmpty() provinceId: string;
+  @ApiProperty() @IsUUID() provinceId: string;
 
-  @ApiProperty() @IsString() @IsNotEmpty() name: string;
+  @ApiProperty() @IsString() name: string;
 }

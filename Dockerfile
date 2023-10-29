@@ -44,7 +44,6 @@ ENV NODE_ENV production
 # Copy the bundled code from the build stage to the production image
 COPY --chown=node:node --from=builder /wbms_backend/node_modules ./node_modules
 COPY --chown=node:node --from=builder /wbms_backend/dist ./dist
-COPY --chown=node:node --from=builder /wbms_backend/cert ./cert
 COPY --chown=node:node --from=builder /wbms_backend/.env.production ./.env
 
 # Expose port

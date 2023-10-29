@@ -7,9 +7,31 @@ import { CreateTransportVehicleDto, UpdateTransportVehicleDto } from './dto';
 import { TransportVehicleEntity } from './entities';
 
 @ApiTags('Transport Vehicles')
-@Controller('api/transport-vehicle')
+@Controller('api/transport-vehicles')
 export class TransportVehicleController {
   constructor(private readonly transportVehicleService: TransportVehicleService) {}
+
+  @Get('edispatch-sync')
+  async eDispatchSync(@Req() req: Request) {
+    const dataOut = {
+      status: true,
+      message: '',
+      logs: {}
+    };
+
+    try {
+      const userId = ''; // req.user['id'];
+      const status = await this.transportVehicleService.eDispatchSync(userId);
+
+      dataOut.status = !!status;
+    } catch (error) {
+      dataOut.status = false;
+      dataOut.message = error.message;
+      dataOut.logs = { ...dataOut.logs, error };
+    }
+
+    return dataOut;
+  }
 
   @Get('')
   @ApiCreatedResponse({ type: TransportVehicleEntity, isArray: true })

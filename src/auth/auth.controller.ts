@@ -3,9 +3,8 @@ import { Request, Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
+import { SignupDto, SigninDto } from './dto';
 import { AtGuard, RtGuard } from 'src/common/guards';
-import { SigninDto } from './dto';
-import { CreateUserDto } from 'src/user/dto';
 
 @ApiTags('Auth')
 @Controller('api/auth')
@@ -25,7 +24,6 @@ export class AuthController {
     };
 
     try {
-      console.log(req.user);
       const userId = req.user['id'];
       const user = await this.authService.getIAM(userId);
 
@@ -43,7 +41,7 @@ export class AuthController {
 
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
-  async signup(@Body() dto: CreateUserDto) {
+  async signup(@Body() dto: SignupDto) {
     const dataOut = {
       status: true,
       message: '',
@@ -56,7 +54,9 @@ export class AuthController {
     try {
       const user = await this.authService.signup(dto);
 
-      dataOut.data.user = user;
+      const { username, email, name, division, position, phone } = user;
+
+      dataOut.data.user = { username, email, name, division, position, phone };
     } catch (error) {
       dataOut.status = false;
       dataOut.message = error.message;

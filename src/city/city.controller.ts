@@ -39,8 +39,6 @@ export class CityController {
     }
 
     return dataOut;
-
-    return;
   }
 
   @Get('deleted')
@@ -113,9 +111,7 @@ export class CityController {
     try {
       const record = await this.cityService.searchFirst(query);
 
-      if (record) {
-        dataOut.data.city = record;
-      }
+      dataOut.data.city = record;
     } catch (error) {
       dataOut.status = false;
       dataOut.message = error.message;
@@ -170,9 +166,7 @@ export class CityController {
     try {
       const record = await this.cityService.searchFirstDeleted(query);
 
-      if (record) {
-        dataOut.data.city = record;
-      }
+      dataOut.data.city = record;
     } catch (error) {
       dataOut.status = false;
       dataOut.message = error.message;

@@ -1,23 +1,25 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsUUID, IsOptional, IsInt, IsDate, IsDateString, IsNumber } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString, IsUUID, IsOptional, IsInt, IsNumber } from 'class-validator';
 
 export class CreateTransportVehicleDto {
-  @ApiProperty() @IsUUID() @IsNotEmpty() companyId?: string;
-  @ApiProperty({ required: false }) @IsUUID() @IsOptional() companyRefId?: string;
-  @ApiProperty() @IsString() @IsNotEmpty() companyName: string;
+  @ApiPropertyOptional() @IsOptional() @IsUUID() companyId: string;
+  @ApiPropertyOptional() @IsOptional() @IsUUID() companyRefId: string;
+  @ApiProperty() @IsString() companyName: string;
 
-  @ApiProperty() @IsUUID() @IsNotEmpty() productId: string;
-  @ApiProperty({ required: false }) @IsUUID() @IsOptional() productRefId?: string;
-  @ApiProperty() @IsString() @IsNotEmpty() productName: string;
-  @ApiProperty() @IsString() @IsNotEmpty() productCode: string;
+  @ApiPropertyOptional() @IsOptional() @IsUUID() productId: string;
+  @ApiPropertyOptional() @IsOptional() @IsUUID() productRefId: string;
+  @ApiProperty() @IsString() productName: string;
 
-  @ApiProperty() @IsString() @IsNotEmpty() plateNo: string;
-  @ApiProperty({ required: false }) @IsNumber() @IsOptional() capacity?: number;
-  @ApiProperty({ required: false }) @IsString() @IsOptional() brand?: string;
-  @ApiProperty({ required: false }) @IsString() @IsOptional() model?: string;
-  @ApiProperty({ required: false }) @IsInt() @IsNotEmpty() sccModel: number;
-  @ApiProperty({ required: false }) @IsString() @IsOptional() notes?: string;
+  @ApiProperty() @IsString() code: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() codeSap: string;
+  @ApiProperty() @IsString() plateNo: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() description: string;
+  @ApiPropertyOptional() @IsOptional() @IsNumber() capacity: number;
+  @ApiPropertyOptional() @IsOptional() @IsString() brand: string;
+  @ApiPropertyOptional() @IsOptional() @IsString() model: string;
+  @ApiProperty() @IsInt() sccModel: number;
+  @ApiPropertyOptional() @IsOptional() @IsString() notes: string;
 
-  @ApiProperty({ required: false }) @IsString() @IsOptional() licenseED?: Date;
-  @ApiProperty({ required: false }) @IsString() @IsOptional() keurED?: Date;
+  @ApiPropertyOptional() @IsOptional() licenseED: Date;
+  @ApiPropertyOptional() @IsOptional() keurED: Date;
 }

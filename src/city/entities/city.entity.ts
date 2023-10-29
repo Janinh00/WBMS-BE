@@ -1,14 +1,14 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { City } from '@prisma/client';
 
 export class CityEntity implements City {
-  @ApiProperty() id: string;
+  @ApiPropertyOptional() id: string;
 
   @ApiProperty() provinceId: string;
 
   @ApiProperty() name: string;
 
-  @ApiProperty() isDeleted: boolean;
+  @ApiPropertyOptional() isDeleted: boolean;
 
   userCreated: string;
   userModified: string;

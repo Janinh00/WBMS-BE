@@ -10,15 +10,6 @@ import { UserEntity } from './entities';
 export class UserService {
   constructor(private db: DbService) {}
 
-  async getIAM(id: string): Promise<UserEntity> {
-    const user = await this.db.user.findUnique({ where: { id } });
-
-    delete user.hashedPassword;
-    delete user.hashedRT;
-
-    return user;
-  }
-
   async getAll(): Promise<UserEntity[]> {
     const records = await this.db.user.findMany({ where: { isDeleted: false } });
 
@@ -39,6 +30,23 @@ export class UserService {
 
   async searchFirst(query: any): Promise<UserEntity> {
     query.where = { ...query.where, isDeleted: false };
+    query = {
+      ...query,
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        nik: true,
+        name: true,
+        division: true,
+        position: true,
+        phone: true,
+        role: true,
+        isEmailVerified: true,
+        isLDAPUser: true,
+        isDisabled: true
+      }
+    };
 
     const record = await this.db.user.findFirst(query);
 
@@ -47,6 +55,23 @@ export class UserService {
 
   async searchMany(query: any): Promise<UserEntity[]> {
     query.where = { ...query.where, isDeleted: false };
+    query = {
+      ...query,
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        nik: true,
+        name: true,
+        division: true,
+        position: true,
+        phone: true,
+        role: true,
+        isEmailVerified: true,
+        isLDAPUser: true,
+        isDisabled: true
+      }
+    };
 
     const records = await this.db.user.findMany(query);
 
@@ -70,6 +95,8 @@ export class UserService {
   }
 
   async create(dto: CreateUserDto, userId: string): Promise<UserEntity> {
+    if (dto.password !== dto.passwordConfirm) throw new ForbiddenException('Password dan Confirm Password tidak sama.');
+
     // generate the password hash
     const hashedPassword = await hash(dto.password);
 
@@ -84,6 +111,7 @@ export class UserService {
           division: dto.division,
           position: dto.position,
           phone: dto.phone,
+          role: dto.role,
           hashedPassword: hashedPassword,
           userCreated: userId,
           userModified: userId
@@ -102,6 +130,9 @@ export class UserService {
   }
 
   async updateById(id: string, dto: UpdateUserDto, userId: string): Promise<UserEntity> {
+    if (dto?.password && dto.password !== dto?.passwordConfirm)
+      throw new ForbiddenException('Password dan Confirm Password tidak sama.');
+
     let updateData = new UserEntity();
 
     if (dto.password) updateData.hashedPassword = await hash(dto.password);

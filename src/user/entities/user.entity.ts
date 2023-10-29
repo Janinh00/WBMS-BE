@@ -1,10 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
 export class UserEntity implements User {
   @ApiProperty() id: string;
-
-  @ApiProperty() roleId: string | null;
 
   @ApiProperty() username: string;
   @ApiProperty() email: string;
@@ -13,19 +11,20 @@ export class UserEntity implements User {
   @ApiProperty() name: string;
   @ApiProperty() division: string;
   @ApiProperty() position: string;
-  @ApiProperty() phone: string | null;
+  @ApiPropertyOptional() phone: string;
+  @ApiPropertyOptional() role: number;
 
-  @ApiProperty() hashedPassword: string;
-  @ApiProperty() hashedRT: string | null;
+  hashedPassword: string;
+  hashedRT: string;
 
-  @ApiProperty() isEmailVerified: boolean;
-  @ApiProperty() isLDAPUser: boolean;
-  @ApiProperty() isDisabled: boolean;
+  @ApiPropertyOptional() isEmailVerified: boolean;
+  @ApiPropertyOptional() isLDAPUser: boolean;
+  @ApiPropertyOptional() isDisabled: boolean;
 
-  @ApiProperty() isDeleted: boolean;
+  @ApiPropertyOptional() isDeleted: boolean;
 
-  userCreated: string | null;
-  userModified: string | null;
+  userCreated: string;
+  userModified: string;
   dtCreated: Date;
   dtModified: Date;
 }

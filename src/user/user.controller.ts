@@ -11,46 +11,22 @@ import {
   HttpStatus,
   HttpCode
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 
 import { UserService } from './user.service';
-import { AtGuard } from 'src/common/guards';
 import { CreateUserDto, UpdateUserDto } from './dto';
+import { UserEntity } from './entities';
+import { AtGuard } from 'src/common/guards';
 
 @ApiTags('Users')
 @UseGuards(AtGuard)
 @Controller('api/users')
-export class UsersController {
-  constructor(private usersService: UserService) {}
-
-  @Get('iam')
-  async getIAM(@Req() req: Request) {
-    const dataOut = {
-      status: true,
-      message: '',
-      data: {
-        user: null
-      },
-      logs: {}
-    };
-
-    try {
-      const user = await this.usersService.getIAM(req.user['id']);
-
-      const { username, email, name, division, position, phone } = user;
-
-      dataOut.data.user = { username, email, name, division, position, phone };
-    } catch (error) {
-      dataOut.status = false;
-      dataOut.message = error.message;
-      dataOut.logs = { ...dataOut.logs, error };
-    }
-
-    return dataOut;
-  }
+export class UserController {
+  constructor(private userService: UserService) {}
 
   @Get()
+  @ApiCreatedResponse({ type: UserEntity, isArray: true })
   async getAll() {
     const dataOut = {
       status: true,
@@ -66,7 +42,7 @@ export class UsersController {
     };
 
     try {
-      const users = await this.usersService.getAll();
+      const users = await this.userService.getAll();
 
       dataOut.data.user.totalRecords = users.length;
       dataOut.data.user.records = users;
@@ -80,6 +56,7 @@ export class UsersController {
   }
 
   @Get('deleted')
+  @ApiCreatedResponse({ type: UserEntity, isArray: true })
   async getAllDeleted() {
     const dataOut = {
       status: true,
@@ -95,7 +72,7 @@ export class UsersController {
     };
 
     try {
-      dataOut.data.user.records = await this.usersService.getAllDeleted();
+      dataOut.data.user.records = await this.userService.getAllDeleted();
     } catch (error) {
       dataOut.status = false;
       dataOut.message = error.message;
@@ -106,34 +83,30 @@ export class UsersController {
   }
 
   @Get(':id')
+  @ApiCreatedResponse({ type: UserEntity })
   async getById(@Param('id') userId: string) {
     const dataOut = {
       status: true,
       message: '',
       data: {
-        user: {
-          page: 0,
-          totalRecords: 0,
-          records: []
-        }
+        user: null
       },
       logs: {}
     };
 
     try {
-      const user = await this.usersService.getById(userId);
+      const user = await this.userService.getById(userId);
 
       const { username, email, name, division, position, phone } = user;
 
-      dataOut.data.user.records.push({
+      dataOut.data.user = {
         username,
         email,
         name,
         division,
         position,
         phone
-      });
-      dataOut.data.user.totalRecords = 1;
+      };
     } catch (error) {
       dataOut.status = false;
       dataOut.message = error.message;
@@ -144,27 +117,122 @@ export class UsersController {
   }
 
   @Post('search-first')
-  searchFirst(@Body() query: any) {
-    return this.usersService.searchFirst(query);
+  @ApiCreatedResponse({ type: UserEntity })
+  async searchFirst(@Body() query: any) {
+    const dataOut = {
+      status: true,
+      message: '',
+      data: {
+        user: null
+      },
+      logs: {}
+    };
+
+    try {
+      const record = await this.userService.searchFirst(query);
+
+      if (record) {
+        dataOut.data.user = record;
+      }
+    } catch (error) {
+      dataOut.status = false;
+      dataOut.message = error.message;
+      dataOut.logs = { ...dataOut.logs, reqBody: query, error };
+    }
+
+    return dataOut;
   }
 
   @Post('search-many')
-  searchMany(@Body() query: any) {
-    return this.usersService.searchMany(query);
+  @ApiCreatedResponse({ type: UserEntity, isArray: true })
+  async searchMany(@Body() query: any) {
+    const dataOut = {
+      status: true,
+      message: '',
+      data: {
+        user: {
+          records: [],
+          totalRecords: 0,
+          page: 0
+        }
+      },
+      logs: {}
+    };
+
+    try {
+      const records = await this.userService.searchMany(query);
+
+      dataOut.data.user.records = records;
+      dataOut.data.user.totalRecords = records.length;
+    } catch (error) {
+      dataOut.status = false;
+      dataOut.message = error.message;
+      dataOut.logs = { ...dataOut.logs, reqBody: query, error };
+    }
+
+    return dataOut;
   }
 
   @Post('search-first-deleted')
-  searchFirstDeleted(@Body() query: any) {
-    return this.usersService.searchFirstDeleted(query);
+  @ApiCreatedResponse({ type: UserEntity })
+  async searchFirstDeleted(@Body() query: any) {
+    const dataOut = {
+      status: true,
+      message: '',
+      data: {
+        user: null
+      },
+      logs: {}
+    };
+
+    try {
+      const record = await this.userService.searchFirstDeleted(query);
+
+      if (record) {
+        dataOut.data.user = record;
+      }
+    } catch (error) {
+      dataOut.status = false;
+      dataOut.message = error.message;
+      dataOut.logs = { ...dataOut.logs, reqBody: query, error };
+    }
+
+    return dataOut;
   }
 
   @Post('search-many-deleted')
-  searchDeleted(@Body() query: any) {
-    return this.usersService.searchManyDeleted(query);
+  @ApiCreatedResponse({ type: UserEntity, isArray: true })
+  async searchManyDeleted(@Body() query: any) {
+    const dataOut = {
+      status: true,
+      message: '',
+      data: {
+        user: {
+          records: [],
+          totalRecords: 0,
+          page: 0
+        }
+      },
+      logs: {}
+    };
+
+    try {
+      const records = await this.userService.searchManyDeleted(query);
+
+      dataOut.data.user.records = records;
+      dataOut.data.user.totalRecords = records.length;
+    } catch (error) {
+      dataOut.status = false;
+      dataOut.message = error.message;
+      dataOut.logs = { ...dataOut.logs, reqBody: query, error };
+    }
+
+    return dataOut;
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @ApiCreatedResponse({ type: UserEntity })
   async create(@Body() dto: CreateUserDto, @Req() req: Request) {
     const dataOut = {
       status: true,
@@ -176,8 +244,8 @@ export class UsersController {
     };
 
     try {
-      const userId = ''; //req.user['id'];
-      const user = await this.usersService.create(dto, userId);
+      const userId = req.user['id'];
+      const user = await this.userService.create(dto, userId);
 
       const { username, email, name, division, position, phone } = user;
 
@@ -192,7 +260,9 @@ export class UsersController {
   }
 
   @Patch(':id')
-  async updateById(@Param('id') userId: string, @Body() dto: UpdateUserDto, @Req() req: Request) {
+  @HttpCode(HttpStatus.OK)
+  @ApiCreatedResponse({ type: UserEntity })
+  async updateById(@Param('id') id: string, @Body() dto: UpdateUserDto, @Req() req: Request) {
     const dataOut = {
       status: true,
       message: '',
@@ -203,8 +273,8 @@ export class UsersController {
     };
 
     try {
-      const userId = ''; //req.user['id'];
-      const user = await this.usersService.updateById(userId, dto, userId);
+      const userId = req.user['id'];
+      const user = await this.userService.updateById(id, dto, userId);
 
       const { username, email, name, division, position, phone } = user;
 
@@ -219,6 +289,8 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.OK)
+  @ApiCreatedResponse({ type: UserEntity })
   async deleteById(@Param('id') id: string, @Req() req: Request) {
     const dataOut = {
       status: true,
@@ -230,8 +302,8 @@ export class UsersController {
     };
 
     try {
-      const userId = ''; // req.user['id'];
-      const user = await this.usersService.deleteById(id, userId);
+      const userId = req.user['id'];
+      const user = await this.userService.deleteById(id, userId);
 
       const { username, email, name, isDisabled, isDeleted } = user;
 
@@ -239,7 +311,7 @@ export class UsersController {
     } catch (error) {
       dataOut.status = false;
       dataOut.message = error.message;
-      dataOut.logs = { ...dataOut.logs, reqParams: { id }, error };
+      dataOut.logs = { ...dataOut.logs, reqParams: { id: id }, error };
     }
 
     return dataOut;
